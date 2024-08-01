@@ -9,6 +9,10 @@ func CreateTrack(dto models.Track) (models.Track, error) {
     return repositories.AddTrack(dto)
 }
 
+func UpdateTrack(dto models.Track) (models.Track, error) {
+    return repositories.UpdateTrack(dto)
+}
+
 func GetAllTracks() ([]models.Track, error) {
     return repositories.GetAllTracks()
 }

@@ -8,11 +8,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func CreateComment(models.Comment) (models.Comment, error) {
-    return models.Comment{}, nil
+func CreateComment(comment models.Comment) (models.Comment, error) {
+
+    comment.Id = ""
+    result, err := commentCollection.InsertOne(context.TODO(), comment)
+    if err != nil {
+        return models.Comment{}, err
+    }
+
+    comment.Id = result.InsertedID.(primitive.ObjectID).Hex()
+    return comment, nil
+
 }
 
-func EditComment(models.Comment) (models.Comment, error) {
+func EditComment(comment models.Comment) (models.Comment, error) {
+
     return models.Comment{}, nil
 }
 

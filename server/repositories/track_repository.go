@@ -76,4 +76,29 @@ func DeleteTrack(id string) (error) {
     return nil
 }
 
+func UpdateTrack(track models.Track) (models.Track, error) {
+    objId, err := primitive.ObjectIDFromHex(track.Id)
+    if err != nil {
+        return models.Track{}, err
+    }
 
+    filter := bson.D{{"_id", objId}}
+
+    update := bson.D{
+        {"$set", bson.D{
+            {"name", track.Name},
+            {"artist", track.Artist},
+            {"text", track.Text},
+            {"listens", track.Listens},
+            {"picture", track.Picture},
+            {"audio", track.Audio},
+            {"comments", track.Comments},
+        }},
+    }
+
+    _, err = trackCollection.UpdateOne(context.TODO(), filter, update)
+    if err != nil {
+        return models.Track{}, err
+    }
+    return track, nil
+}

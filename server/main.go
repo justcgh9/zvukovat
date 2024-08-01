@@ -42,7 +42,7 @@ func main() {
     r.HandleFunc("/tracks", handlers.GetTracksHandler).Methods("GET")
     r.HandleFunc("/tracks/{track_id}", handlers.GetTrackHandler).Methods("GET")
     r.HandleFunc("/tracks/{track_id}", handlers.DeleteTrack).Methods("DELETE")
-
+    r.HandleFunc("/tracks/{track_id}/comment", handlers.CreateComment).Methods("POST")
 	server := http.Server{
 		Addr:         ":8080",
 		Handler:      r,
