@@ -23,11 +23,30 @@ func CreateComment(comment models.Comment) (models.Comment, error) {
 
 func EditComment(comment models.Comment) (models.Comment, error) {
 
-    return models.Comment{}, nil
+    objId, err := primitive.ObjectIDFromHex(comment.Id)
+    if err != nil {
+        return models.Comment{}, err
+    }
+
+    filter := bson.D{{"_id", objId}}
+
+    update := bson.D{
+        {"$set", bson.D{
+            {"track_id", comment.Track_id},
+            {"username", comment.Username},
+            {"text", comment.Text},
+        }},
+    }
+
+    _, err = commentCollection.UpdateOne(context.TODO(), filter, update)
+    if err != nil {
+        return models.Comment{}, err
+    }
+    return comment, nil
+
 }
 
 func GetComment(commentID string) (models.Comment, error) {
-
     var comment models.Comment
     objId, err := primitive.ObjectIDFromHex(commentID)
     if err != nil {
@@ -39,10 +58,20 @@ func GetComment(commentID string) (models.Comment, error) {
         return models.Comment{}, err
     }
 
-    return models.Comment{}, nil
+    return comment, nil
 }
 
-func DeleteComment(commentID string) (models.Comment, error) {
-    return models.Comment{}, nil
+func DeleteComment(commentID string) (error) {
+    objId, err := primitive.ObjectIDFromHex(commentID)
+    if err != nil {
+        return err
+    }
+
+    filter := bson.D{{"_id", objId}}
+    _, err = commentCollection.DeleteOne(context.TODO(), filter)
+    if err != nil {
+        return err
+    }
+    return nil
 }
 

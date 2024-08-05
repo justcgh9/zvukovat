@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"justcgh9/spotify_clone/server/models"
 	"justcgh9/spotify_clone/server/services"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+const uploadDir = "files/"
 
 func GetTrackHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -48,17 +51,41 @@ func GetTracksHandler(w http.ResponseWriter, r *http.Request) {
 
 func PostTrack(w http.ResponseWriter, r *http.Request) {
 
-    var createTrackDTO models.Track
-    err := json.NewDecoder(r.Body).Decode(&createTrackDTO)
+    err := r.ParseMultipartForm(10 << 20) // Max upload size set to 10MB
     if err != nil {
-        http.Error(w, "Invalid Request Payload", http.StatusUnprocessableEntity)
+        http.Error(w, "Error parsing form data", http.StatusBadRequest)
         return
     }
 
-    if createTrackDTO.Comments == nil {
-        createTrackDTO.Comments = make([]string, 1)
+    // Extract form values
+    var createTrackDTO models.Track
+    createTrackDTO.Name = r.FormValue("name")
+    createTrackDTO.Artist = r.FormValue("artist")
+    createTrackDTO.Text = r.FormValue("text")
+    pictureFile, pictureHeader, err := r.FormFile("picture")
+    if err == nil {
+        createTrackDTO.Picture, err = services.SaveFile(pictureFile, pictureHeader, uploadDir)
+        if err != nil {
+            fmt.Println(err)
+            http.Error(w, "Error saving picture file", http.StatusInternalServerError)
+            return
+        }
+    } else {
+        createTrackDTO.Picture = ""
     }
 
+    audioFile, audioHeader, err := r.FormFile("audio")
+    if err == nil {
+        createTrackDTO.Audio, err = services.SaveFile(audioFile, audioHeader, uploadDir)
+        if err != nil {
+            http.Error(w, "Error saving audio file", http.StatusInternalServerError)
+            return
+        }
+    } else {
+        createTrackDTO.Audio = ""
+    }
+
+    createTrackDTO.Listens = 0
     newTrack, err := services.CreateTrack(createTrackDTO)
     if err != nil {
         http.Error(w, "Error when creating track", http.StatusInternalServerError)
@@ -85,6 +112,16 @@ func DeleteTrack(w http.ResponseWriter, r *http.Request) {
             http.Error(w, "Error fetching track", http.StatusInternalServerError)
     }
         return
+    }
+
+    err = services.DeleteFile(deletedTrack.Audio, uploadDir)
+    if err != nil {
+        http.Error(w, "Error deleting audio", http.StatusInternalServerError)
+    }
+
+    err = services.DeleteFile(deletedTrack.Picture, uploadDir)
+    if err != nil {
+        http.Error(w, "Error deleting audio", http.StatusInternalServerError)
     }
 
     w.Header().Set("Content-Type", "application/json")
