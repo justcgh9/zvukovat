@@ -7,6 +7,7 @@ import (
 	"justcgh9/spotify_clone/server/models"
 	"justcgh9/spotify_clone/server/services"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -39,10 +40,50 @@ func GetTrackHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetTracksHandler(w http.ResponseWriter, r *http.Request) {
 
-    tracks, err := services.GetAllTracks()
+    queryParams := r.URL.Query()
+    countStr := queryParams.Get("count")
+    offsetStr := queryParams.Get("offset")
+
+    if (countStr == "") != (offsetStr == "") {
+        http.Error(w, "Either both count and offset must be set or none of them", http.StatusBadRequest)
+        return
+    }
+
+    var getParams *models.TrackPaginationParams
+    if countStr != "" {
+        count, err := strconv.Atoi(countStr)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+            return
+        }
+
+        offset, err := strconv.Atoi(offsetStr)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+            return
+        }
+
+        getParams = &models.TrackPaginationParams{
+            Offset: offset,
+            Count: count,
+        }
+    }
+    tracks, err := services.GetAllTracks(getParams)
     if err != nil {
         http.Error(w, "Error fetching tracks", http.StatusInternalServerError)
-        return
+    }
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(tracks)
+    return
+}
+
+func SearchTrack(w http.ResponseWriter, r *http.Request) {
+    queryParams := r.URL.Query()
+    name := queryParams.Get("name")
+    tracks, err := services.FindTrack(name)
+    if err != nil {
+        fmt.Println(err.Error())
+        http.Error(w, "Error fetching tracks", http.StatusInternalServerError)
     }
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(tracks)
@@ -64,9 +105,8 @@ func PostTrack(w http.ResponseWriter, r *http.Request) {
     createTrackDTO.Text = r.FormValue("text")
     pictureFile, pictureHeader, err := r.FormFile("picture")
     if err == nil {
-        createTrackDTO.Picture, err = services.SaveFile(pictureFile, pictureHeader, uploadDir)
+        createTrackDTO.Picture, err = services.SaveFile(pictureFile, pictureHeader, uploadDir, "picture")
         if err != nil {
-            fmt.Println(err)
             http.Error(w, "Error saving picture file", http.StatusInternalServerError)
             return
         }
@@ -76,7 +116,7 @@ func PostTrack(w http.ResponseWriter, r *http.Request) {
 
     audioFile, audioHeader, err := r.FormFile("audio")
     if err == nil {
-        createTrackDTO.Audio, err = services.SaveFile(audioFile, audioHeader, uploadDir)
+        createTrackDTO.Audio, err = services.SaveFile(audioFile, audioHeader, uploadDir, "audio")
         if err != nil {
             http.Error(w, "Error saving audio file", http.StatusInternalServerError)
             return

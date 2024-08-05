@@ -14,6 +14,8 @@ func CreateComment(trackID string, comment models.Comment) (models.Comment, erro
         return models.Comment{}, err
     }
 
+    comment.Track_id = trackID
+
     createdComment, err := repositories.CreateComment(comment)
     if err != nil {
         return models.Comment{}, err

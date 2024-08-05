@@ -11,6 +11,9 @@ type Track struct {
     Comments []string `bson:"comments" json:"comments"`
 }
 
-
+type TrackPaginationParams struct {
+    Count   int
+    Offset  int
+}
 
 

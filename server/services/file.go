@@ -10,13 +10,23 @@ import (
 	"github.com/google/uuid"
 )
 
-func SaveFile(file multipart.File, header *multipart.FileHeader, uploadDir string) (string, error) {
+func SaveFile(file multipart.File, header *multipart.FileHeader, uploadDir string, fileType string) (string, error) {
     defer file.Close()
 
     ext := filepath.Ext(header.Filename)
-    filename := uuid.New().String() + ext
+    filename := "/" + uuid.New().String() + ext
 
-    path := filepath.Join(uploadDir, filepath.Base(filename))
+    path := filepath.Join(uploadDir, fileType)
+    if _, err := os.Stat(path); os.IsNotExist(err) {
+        err := os.MkdirAll(path, os.ModePerm)
+        if err != nil {
+            return "", err
+        }
+    } else if err != nil {
+        return "", err
+    }
+
+    path = filepath.Join(uploadDir, fileType, filename)
 
     dst, err := os.Create(path)
     if err != nil {
@@ -29,7 +39,7 @@ func SaveFile(file multipart.File, header *multipart.FileHeader, uploadDir strin
         return "", err
     }
 
-    return filename, nil
+    return fileType + filename, nil
 }
 
 func DeleteFile(filename string, uploadDir string) error {

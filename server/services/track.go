@@ -13,8 +13,12 @@ func UpdateTrack(dto models.Track) (models.Track, error) {
     return repositories.UpdateTrack(dto)
 }
 
-func GetAllTracks() ([]models.Track, error) {
-    return repositories.GetAllTracks()
+func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) {
+    return repositories.GetAllTracks(params)
+}
+
+func FindTrack(name string) ([]models.Track, error) {
+    return repositories.SearchTrack(name)
 }
 
 func GetOneTrack(trackID string) (models.Track, error) {

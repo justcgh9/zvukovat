@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var trackCollection, commentCollection, albumCollection *mongo.Collection
@@ -18,9 +19,46 @@ func Initialize(client *mongo.Client) {
     albumCollection = client.Database(config.DBName).Collection("albums")
 }
 
-func GetAllTracks() ([]models.Track, error) {
+func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) {
     var tracks []models.Track
-    cursor, err := trackCollection.Find(context.TODO(), bson.D{})
+
+    findOptions := options.Find()
+    if params != nil {
+        findOptions.SetSkip(int64(params.Offset))
+    	findOptions.SetLimit(int64(params.Count))
+    } else {
+        findOptions.SetLimit(int64(10))
+    }
+    cursor, err := trackCollection.Find(context.TODO(), bson.D{}, findOptions)
+    if err != nil {
+        return nil, err
+    }
+    defer cursor.Close(context.TODO())
+
+    for cursor.Next(context.TODO()) {
+        var track models.Track
+        if err := cursor.Decode(&track); err != nil {
+            return nil, err
+        }
+        tracks = append(tracks, track)
+    }
+
+    return tracks, nil
+}
+
+func SearchTrack(name string) ([]models.Track, error) {
+    var tracks []models.Track
+
+    filter := bson.D {
+        {
+            "name", bson.D{
+                {"$regex", name},
+                {"$options", "i"},
+            },
+        },
+    }
+
+    cursor, err := trackCollection.Find(context.TODO(), filter)
     if err != nil {
         return nil, err
     }

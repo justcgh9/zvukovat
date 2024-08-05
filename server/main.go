@@ -39,6 +39,7 @@ func main() {
 
     r := mux.NewRouter()
     r.HandleFunc("/tracks/upload", handlers.PostTrack).Methods("POST")
+    r.HandleFunc("/tracks/search", handlers.SearchTrack).Methods("GET")
     r.HandleFunc("/tracks", handlers.GetTracksHandler).Methods("GET")
     r.HandleFunc("/tracks/{track_id}", handlers.GetTrackHandler).Methods("GET")
     r.HandleFunc("/tracks/{track_id}", handlers.DeleteTrack).Methods("DELETE")
@@ -46,6 +47,11 @@ func main() {
     r.HandleFunc("/tracks/{track_id}/comment", handlers.GetComments).Methods("GET")
     r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", handlers.EditComment).Methods("PUT")
     r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", handlers.DeleteComment).Methods("DELETE")
+
+    staticDir := "./files/"
+	fs := http.FileServer(http.Dir(staticDir))
+	r.PathPrefix("/files/").Handler(http.StripPrefix("/files/", fs))
+
 	server := http.Server{
 		Addr:         ":8080",
 		Handler:      r,
