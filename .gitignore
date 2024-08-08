@@ -3,3 +3,4 @@ server/tmp
 server/go.mod
 server/go.sum
 server/files
+clientCode
