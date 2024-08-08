@@ -1,4 +1,3 @@
-'use client'
 import React, { RefObject, useRef } from "react";
 
 interface FileUploaderProps {

@@ -1,4 +1,3 @@
-'use client'
 import Button from '@mui/material/Button'
 import { useRouter } from 'next/navigation';
 import React from 'react';

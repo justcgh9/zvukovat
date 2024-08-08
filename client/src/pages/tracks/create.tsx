@@ -1,4 +1,3 @@
-'use client'
 import StepDisplayer from "@/components/StepDisplayer";
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'

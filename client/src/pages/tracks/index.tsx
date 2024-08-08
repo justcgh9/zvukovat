@@ -14,7 +14,7 @@ export default function Tracks() {
             text: "Here we go for the hundredth time, hand grenade pins in every line, throw them up and let something shine, going out of my fucking mind.",
             listens: 0,
             picture: "picture/e4c95df0-c09d-4e74-a498-55b81371419f.jpg",
-            audio: "audio/52500e5e-2317-4426-8d5c-ca20e7d4d8fc.mp3",
+            audio: "http://localhost:8080/files/audio/52500e5e-2317-4426-8d5c-ca20e7d4d8fc.mp3",
             comments: []
         }
     ]

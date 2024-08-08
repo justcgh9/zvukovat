@@ -1,4 +1,3 @@
-'use client'
 import { ITrack } from "@/types/track";
 import Card from "@mui/material/Card"
 import Grid from "@mui/material/Grid"
@@ -6,6 +5,8 @@ import styles from "../styles/TrackItem.module.scss"
 import { Delete, Pause, PlayArrow } from "@mui/icons-material";
 import IconButton from '@mui/material/IconButton'
 import { useRouter } from "next/navigation";
+import React, { useActionState } from "react";
+import { useActions } from "@/hooks/useActions";
 
 interface TrackItemProps {
     track: ITrack
@@ -14,10 +15,17 @@ interface TrackItemProps {
 
 const TrackItem: React.FC<TrackItemProps> = ({track, active=false} : TrackItemProps) => {
     const router = useRouter()
+    const {playTrack, pauseTrack, setActiveTrack} = useActions()
+
+    const play = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setActiveTrack(track)
+        playTrack()
+    }
     return (
         <div>
             <Card className={styles.track} onClick={() => router.push('/tracks/' + track._id)}>
-                <IconButton onClick={e => e.stopPropagation()}>
+                <IconButton onClick={play}>
                     {active
                     ? <Pause/>
                     : <PlayArrow/>
