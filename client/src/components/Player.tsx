@@ -11,16 +11,6 @@ import { useActions } from "@/hooks/useActions";
 let audio: HTMLAudioElement;
 
 const Player: React.FC = () => {
-    const track: ITrack = {
-        _id: "66b21aa988a74ad4e0727e5a",
-        name: "Avada",
-        artist: "Linkin Park",
-        text: "Here we go for the hundredth time, hand grenade pins in every line, throw them up and let something shine, going out of my fucking mind.",
-        listens: 0,
-        picture: "picture/e4c95df0-c09d-4e74-a498-55b81371419f.jpg",
-        audio: "http://localhost:8080/files/audio/52500e5e-2317-4426-8d5c-ca20e7d4d8fc.mp3",
-        comments: []
-    }
     const {pause, volume, active, duration, currentTime } = useTypedSelector(state => state.player)
     const {pauseTrack, playTrack, setActiveTrack, setCurrentTime, setDuration, setVolume} = useActions()
 
@@ -38,7 +28,7 @@ const Player: React.FC = () => {
 
     const setAudio = () => {
         if (active) {
-            audio.src = active.audio
+            audio.src = 'http://localhost:8080/files/' + active.audio
             audio.volume = volume / 100
             audio.onloadedmetadata = () => {
                 setDuration(Math.ceil(audio.duration))

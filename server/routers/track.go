@@ -1,4 +1,4 @@
-package handlers
+package routers
 
 import (
 	"encoding/json"
@@ -14,6 +14,10 @@ import (
 )
 
 const uploadDir = "files/"
+
+func AllowOrigin(w http.ResponseWriter) {
+    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+}
 
 func GetTrackHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -78,6 +82,7 @@ func GetTracksHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SearchTrack(w http.ResponseWriter, r *http.Request) {
+    AllowOrigin(w)
     queryParams := r.URL.Query()
     name := queryParams.Get("name")
     tracks, err := services.FindTrack(name)
@@ -91,7 +96,7 @@ func SearchTrack(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostTrack(w http.ResponseWriter, r *http.Request) {
-
+    AllowOrigin(w)
     err := r.ParseMultipartForm(10 << 20) // Max upload size set to 10MB
     if err != nil {
         http.Error(w, "Error parsing form data", http.StatusBadRequest)

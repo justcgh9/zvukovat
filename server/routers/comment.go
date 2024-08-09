@@ -1,4 +1,4 @@
-package handlers
+package routers
 
 import (
 	"encoding/json"
@@ -12,8 +12,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func CreateComment(w http.ResponseWriter, r *http.Request) {
+func HandleCORS(w http.ResponseWriter, r *http.Request) {
 
+    AllowOrigin(w)
+    w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
+    w.Header().Set("Access-Control-Allow-Headers", "Content-type, Cookie")
+    w.WriteHeader(http.StatusOK)
+}
+
+func CreateComment(w http.ResponseWriter, r *http.Request) {
+    AllowOrigin(w)
     var trackID string
     trackID = mux.Vars(r)["track_id"]
 
@@ -74,7 +82,7 @@ func EditComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetComments(w http.ResponseWriter, r *http.Request) {
-
+    AllowOrigin(w)
     var trackID string
     trackID = mux.Vars(r)["track_id"]
     comments, err := services.GetComments(trackID)

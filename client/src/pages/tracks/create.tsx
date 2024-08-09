@@ -4,15 +4,40 @@ import Button from '@mui/material/Button'
 import { useState } from "react";
 import  TextField  from "@mui/material/TextField";
 import FileUploader from "@/components/FileUploader";
+import { useInput } from "@/hooks/useInput";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 
 export default function CreateTrack() {
+    const router = useRouter()
     const [currentStep, setCurrentStep] = useState(0)
     const [thumbnail, setThumbnail] = useState(null)
     const [audio, setAudio] = useState(null)
 
+    const name = useInput('')
+    const artist = useInput('')
+    const text = useInput('')
+
     const next = () => {
-        setCurrentStep(prev => prev + 1)
+        if (currentStep !== 2) {
+            setCurrentStep(prev => prev + 1)
+            return
+        }
+
+        if (thumbnail == null || audio == null) {
+            return
+        }
+
+        const formData = new FormData()
+        formData.append('name', name.value)
+        formData.append('artist', artist.value)
+        formData.append('text', text.value)
+        formData.append('picture', thumbnail)
+        formData.append('audio', audio)
+        axios.post('http://localhost:8080/tracks/upload', formData)
+            .then(resp => router.push('/tracks'))
+            .catch(e => console.log(e))
     }
 
     const back = () => {
@@ -26,14 +51,17 @@ export default function CreateTrack() {
                 {currentStep === 0 &&
                 <Grid container direction={'column'} style={{padding: 20}}>
                     <TextField
+                        {...name}
                         style={{marginTop: 15}}
                         label={"Track name"}
                     />
                     <TextField
+                        {...artist}
                         style={{marginTop: 15}}
                         label={"Author"}
                     />
                     <TextField
+                        {...text}
                         style={{marginTop: 15}}
                         label={"Lyrics"}
                         multiline

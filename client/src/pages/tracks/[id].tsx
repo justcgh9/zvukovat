@@ -1,21 +1,47 @@
 import RouterButton from "@/components/RouterButton";
-import { ITrack } from "@/types/track";
-import React from "react"
+import { IComment, ITrack } from "@/types/track";
+import React, { useState } from "react"
 import Grid from "@mui/material/Grid"
 import Button from "@mui/material/Button"
 import TextField from "@mui/material/TextField"
+import { GetServerSideProps } from "next";
+import axios from "axios";
+import { useInput } from "@/hooks/useInput";
 
-const ViewTrack = () => {
-    const track: ITrack = {
-        _id: "66b21aa988a74ad4e0727e5a",
-        name: "Avada",
-        artist: "Linkin Park",
-        text: "Here we go for the hundredth time, hand grenade pins in every line, throw them up and let something shine, going out of my fucking mind.",
-        listens: 0,
-        picture: "picture/e4c95df0-c09d-4e74-a498-55b81371419f.jpg",
-        audio: "audio/52500e5e-2317-4426-8d5c-ca20e7d4d8fc.mp3",
-        comments: []
+
+
+const ViewTrack = ({serverTrack}: {serverTrack: ITrack}) => {
+    const [track, setTrack] = useState(serverTrack)
+    const [comments, setComments] = useState<IComment[]>([])
+    const username = useInput('')
+    const text = useInput('')
+
+    const addComment = async () => {
+        try {
+            const response = await axios.post('http://localhost:8080/tracks/' + track.id + '/comment', {
+                username: username.value,
+                text: text.value
+            })
+            setTrack({...track, comments: [...track.comments, response.data]})
+            fetchComments()
+        } catch (e) {
+            console.log(e)
+        }
+
+
     }
+
+    const fetchComments = async () => {
+        try {
+            const response = await axios.get("http://localhost:8080/tracks/" + track.id + "/comment")
+            setComments(response.data)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+
+
     return (
         <div>
             <RouterButton to="/tracks">
@@ -34,22 +60,24 @@ const ViewTrack = () => {
             <h1>Comments</h1>
             <Grid container>
                 <TextField
+                    {...username}
                     label="Username"
                     fullWidth
                 />
                 <TextField
+                    {...text}
                     label="Comment"
                     fullWidth
                     multiline
                     rows={4}
                 />
-                <Button>Leave Comment</Button>
+                <Button onClick={addComment}>Leave Comment</Button>
             </Grid>
             <div>
-                {track.comments.map(comment =>
+                {comments?.map(comment =>
                     <div>
-                        <div>Author - {comment.username}</div>
-                        <div>Comment - {comment.text}</div>
+                        <div>Автор - {comment.username}</div>
+                        <div>Комментарий - {comment.text}</div>
                     </div>
                 )}
             </div>
@@ -58,3 +86,14 @@ const ViewTrack = () => {
 }
 
 export default ViewTrack;
+
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
+    
+    const response = await axios.get('http://localhost:8080/tracks/' + params?.id)
+    
+    return {
+        props: {
+            serverTrack: response.data
+        }
+    }
+}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"justcgh9/spotify_clone/server/config"
-	"justcgh9/spotify_clone/server/handlers"
+	"justcgh9/spotify_clone/server/routers"
 	"justcgh9/spotify_clone/server/repositories"
 	"log"
 	"net/http"
@@ -38,15 +38,18 @@ func main() {
     repositories.Initialize(client)
 
     r := mux.NewRouter()
-    r.HandleFunc("/tracks/upload", handlers.PostTrack).Methods("POST")
-    r.HandleFunc("/tracks/search", handlers.SearchTrack).Methods("GET")
-    r.HandleFunc("/tracks", handlers.GetTracksHandler).Methods("GET")
-    r.HandleFunc("/tracks/{track_id}", handlers.GetTrackHandler).Methods("GET")
-    r.HandleFunc("/tracks/{track_id}", handlers.DeleteTrack).Methods("DELETE")
-    r.HandleFunc("/tracks/{track_id}/comment", handlers.CreateComment).Methods("POST")
-    r.HandleFunc("/tracks/{track_id}/comment", handlers.GetComments).Methods("GET")
-    r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", handlers.EditComment).Methods("PUT")
-    r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", handlers.DeleteComment).Methods("DELETE")
+    r.HandleFunc("/tracks/upload", routers.PostTrack).Methods("POST")
+    r.HandleFunc("/tracks/search", routers.SearchTrack).Methods("GET")
+    r.HandleFunc("/tracks", routers.GetTracksHandler).Methods("GET")
+    r.HandleFunc("/tracks/{track_id}", routers.GetTrackHandler).Methods("GET")
+    r.HandleFunc("/tracks/{track_id}", routers.DeleteTrack).Methods("DELETE")
+    r.HandleFunc("/tracks/{track_id}/comment", routers.HandleCORS).Methods("OPTIONS")
+    r.HandleFunc("/tracks/{track_id}/comment", routers.CreateComment).Methods("POST")
+    r.HandleFunc("/tracks/{track_id}/comment", routers.GetComments).Methods("GET")
+    r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", routers.EditComment).Methods("PUT")
+    r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", routers.DeleteComment).Methods("DELETE")
+
+
 
     staticDir := "./files/"
 	fs := http.FileServer(http.Dir(staticDir))

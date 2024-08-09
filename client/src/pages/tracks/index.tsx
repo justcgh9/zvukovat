@@ -1,23 +1,38 @@
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
 import RouterButton from '@/components/RouterButton'
 import { ITrack } from '@/types/track'
 import TrackList from '@/components/TrackList'
+import { useTypedSelector } from '@/hooks/useTypedSelector'
+import { NextThunkDispatch, wrapper } from '@/store'
+import { fetchTracks, searchTracks } from '@/store/action-creators/track'
+import { GetServerSideProps } from 'next/types'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 
 export default function Tracks() {
-    const tracks: ITrack[] = [
-        {
-            _id: "66b21aa988a74ad4e0727e5a",
-            name: "Avada",
-            artist: "Linkin Park",
-            text: "Here we go for the hundredth time, hand grenade pins in every line, throw them up and let something shine, going out of my fucking mind.",
-            listens: 0,
-            picture: "picture/e4c95df0-c09d-4e74-a498-55b81371419f.jpg",
-            audio: "http://localhost:8080/files/audio/52500e5e-2317-4426-8d5c-ca20e7d4d8fc.mp3",
-            comments: []
+    const {tracks, error} = useTypedSelector(state => state.track)
+    const [query, setQuery] = useState<string>('')
+    const [timer, setTimer] = useState<any>(null)
+    const dispatch = useDispatch() as NextThunkDispatch
+
+    const search = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value)
+        if (timer) {
+            clearTimeout(timer)
         }
-    ]
+        setTimer(
+            setTimeout(async () => {
+                await dispatch(await searchTracks(e.target.value))
+            }, 500)
+        )
+        // console.log(tracks)
+    }
+    if (error) {
+        return <h1>{error}</h1>
+    }
     return (
         <>
             <Grid container justifyContent='center'>
@@ -28,9 +43,22 @@ export default function Tracks() {
                             <RouterButton to='/tracks/create'> Upload Track </RouterButton>
                         </Grid>
                     </Box>
+                    <TextField
+                        fullWidth
+                        value={query}
+                        label='Search for songs'
+                        onChange={search}
+                    />
                     <TrackList tracks={tracks}/>
                 </Card>
             </Grid>
         </>
     )
 }
+
+
+export const getServerSideProps = wrapper.getServerSideProps(store => async (context) =>{
+    const dispatch = store.dispatch as NextThunkDispatch
+    await dispatch(await fetchTracks())
+    return {props: {id: null}}; 
+  });
