@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"errors"
 	"justcgh9/spotify_clone/server/models"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -32,25 +31,14 @@ func GetAlbum(albumID string) (models.Album, error) {
     return album, nil
 }
 
-func AddTrackToAlbum(albumID, trackID string) (error) {
+func AddTrackToAlbum(album models.Album, trackID string) (error) {
 
-    var album models.Album
-    objId, err := primitive.ObjectIDFromHex(albumID)
+    objId, err := primitive.ObjectIDFromHex(album.Id)
     if err != nil {
         return err
     }
 
     filter := bson.D{{"_id", objId}}
-
-    err = albumCollection.FindOne(context.TODO(), filter).Decode(album)
-    if err != nil {
-        return err
-    }
-
-    _, err = GetOneTrack(trackID)
-    if err != nil {
-        return errors.New("Failure. Ensure the validity of track identifier")
-    }
 
     update := bson.D{{"$set", bson.D {{"tracks", append(album.Tracks, trackID)}}}}
     _, err = albumCollection.UpdateOne(context.TODO(), filter, update)
@@ -58,5 +46,20 @@ func AddTrackToAlbum(albumID, trackID string) (error) {
         return nil
     }
 
+    return nil
+}
+
+func RemoveAlbum(albumID string) (error) {
+    objId, err := primitive.ObjectIDFromHex(albumID)
+    if err != nil {
+        return err
+    }
+
+    filter := bson.D{{"_id", objId}}
+    _, err = albumCollection.DeleteOne(context.TODO(), filter)
+
+    if err != nil {
+        return err
+    }
     return nil
 }

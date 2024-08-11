@@ -97,13 +97,12 @@ func SearchTrack(w http.ResponseWriter, r *http.Request) {
 
 func PostTrack(w http.ResponseWriter, r *http.Request) {
     AllowOrigin(w)
-    err := r.ParseMultipartForm(10 << 20) // Max upload size set to 10MB
+    err := r.ParseMultipartForm(10 << 20)
     if err != nil {
         http.Error(w, "Error parsing form data", http.StatusBadRequest)
         return
     }
 
-    // Extract form values
     var createTrackDTO models.Track
     createTrackDTO.Name = r.FormValue("name")
     createTrackDTO.Artist = r.FormValue("artist")

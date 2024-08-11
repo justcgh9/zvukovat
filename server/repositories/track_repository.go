@@ -11,12 +11,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var trackCollection, commentCollection, albumCollection *mongo.Collection
+var trackCollection, commentCollection, albumCollection, userCollection *mongo.Collection
 
 func Initialize(client *mongo.Client) {
     trackCollection = client.Database(config.DBName).Collection("tracks")
     commentCollection = client.Database(config.DBName).Collection("comments")
     albumCollection = client.Database(config.DBName).Collection("albums")
+    userCollection = client.Database(config.DBName).Collection("users")
 }
 
 func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) {

@@ -38,6 +38,14 @@ func main() {
     repositories.Initialize(client)
 
     r := mux.NewRouter()
+
+    r.HandleFunc("/registration", routers.PostSignUp).Methods("POST")
+    r.HandleFunc("/users", routers.GetUsers).Methods("POST")
+    r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("POST")
+    r.HandleFunc("/activate/{link}", routers.GetActivation).Methods("POST")
+    r.HandleFunc("/logout", routers.PostSignOut).Methods("POST")
+    r.HandleFunc("/login", routers.PostSignIn).Methods("POST")
+
     r.HandleFunc("/tracks/upload", routers.PostTrack).Methods("POST")
     r.HandleFunc("/tracks/search", routers.SearchTrack).Methods("GET")
     r.HandleFunc("/tracks", routers.GetTracksHandler).Methods("GET")
@@ -49,7 +57,10 @@ func main() {
     r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", routers.EditComment).Methods("PUT")
     r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", routers.DeleteComment).Methods("DELETE")
 
-
+    r.HandleFunc("/albums", routers.PostAlbum).Methods("POST")
+    r.HandleFunc("/albums/{album_id}", routers.PostToAlbum).Methods("POST")
+    r.HandleFunc("/albums/{album_id}", routers.GetAlbum).Methods("GET")
+    r.HandleFunc("/albums/{album_id}", routers.DeleteAlbum).Methods("DELETE")
 
     staticDir := "./files/"
 	fs := http.FileServer(http.Dir(staticDir))
