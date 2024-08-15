@@ -1,0 +1,15 @@
+@import '../styles/variables.scss';
+
+@font-face {
+    font-family: 'Pilated';
+    src: url('/pilated.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  
+body {
+    background-color: $color-background;
+    margin: 0;
+    font-size: 16px;
+}
