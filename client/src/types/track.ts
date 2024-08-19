@@ -1,3 +1,35 @@
+import { StaticImageData } from "next/image";
+
+export interface TrackProps{
+    track: TrackResp;
+    isFavourite: boolean;
+    duration: number; // will be past from back
+}
+
+export interface TrackResp {
+    artist: string;
+    audio: string;
+    comments: any; //will be deleted
+    id: string;
+    listens: number;
+    name: string;
+    picture: string;
+    text: string;
+    //duration: number;
+}
+
+export interface TracksResp {
+    tracksData: TrackResp[];
+}
+
+
+
+
+
+
+
+
+
 export interface IComment {
     id: string;
     track_id: string;
