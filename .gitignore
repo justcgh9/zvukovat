@@ -4,3 +4,6 @@ server/go.mod
 server/go.sum
 server/files
 clientCode
+server/.env
+server/go.mod
+server/go.sum
