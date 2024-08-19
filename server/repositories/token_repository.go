@@ -16,7 +16,6 @@ func SaveToken(token models.Token) (models.Token,error) {
     filter := bson.D{{"user", token.UserId}}
     err = tokenCollection.FindOne(context.TODO(), filter).Decode(&tokenData)
     if err != nil {
-
         if !errors.Is(err, mongo.ErrNoDocuments){
             return models.Token{}, err
         }
@@ -37,13 +36,11 @@ func SaveToken(token models.Token) (models.Token,error) {
             {"refreshToken", token.RefreshToken},
         }},
     }
-
-    result, err := trackCollection.UpdateOne(context.TODO(), filter, update)
+    _, err = tokenCollection.UpdateOne(context.TODO(), filter, update)
     if err != nil {
         return models.Token{}, err
     }
 
-    token.Id = result.UpsertedID.(primitive.ObjectID).Hex()
 
     return token, nil
 }
