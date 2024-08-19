@@ -32,7 +32,6 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
 		Value:    tokens["refreshToken"],
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
 		Path:     "/",
 		Expires:  time.Now().Add(30 * 24 * time.Hour),
 	}
@@ -61,6 +60,18 @@ func PostSignIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
+	cookie := &http.Cookie{
+		Name:     "refreshToken",
+		Value:    userData["refreshToken"],
+		HttpOnly: true,
+		Secure:   true,
+		Path:     "/",
+		Expires:  time.Now().Add(30 * 24 * time.Hour),
+	}
+
+	w.Header().Add("Set-Cookie", fmt.Sprintf("%s;Partitioned", cookie.String()))
+	w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(userData)
 	fmt.Println(userData)
 
 	return

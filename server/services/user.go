@@ -43,7 +43,7 @@ func Registration(user models.User) (map[string]string, models.User, error) {
 		return nil, models.User{}, err
 	}
 
-	tokens, err := generateTokens(user)
+	tokens, err := generateTokens(createdUser)
 	if err != nil {
 		return nil, models.User{}, err
 	}
@@ -61,8 +61,38 @@ func Registration(user models.User) (map[string]string, models.User, error) {
 	return tokens, createdUser, nil
 }
 
-func Login(user models.User) (models.Token, error) {
-	return models.Token{}, nil
+func Login(user models.User) (map[string]string, error) {
+    var tokens map[string]string
+
+    fetchedUser, err := repositories.GetUser(user.Email)
+    if err != nil {
+        return tokens, err
+    }
+
+    if !checkPasswordHash(user.Password, fetchedUser.Password) {
+        return tokens, errors.New("Incorrect password!")
+    }
+
+    if !fetchedUser.IsActivated {
+        return tokens, errors.New("Account is not activated!")
+    }
+    tokens, err = generateTokens(fetchedUser)
+	if err != nil {
+		return tokens, err
+	}
+
+	userDTO := models.Token{
+		RefreshToken: tokens["refreshToken"],
+		UserId:       fetchedUser.Id,
+	}
+
+	_, err = repositories.SaveToken(userDTO)
+	if err != nil {
+		return tokens, err
+	}
+
+
+	return tokens, nil
 }
 
 func hashPassword(password string) (string, error) {
