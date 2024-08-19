@@ -22,34 +22,8 @@ export interface TracksResp {
     tracksData: TrackResp[];
 }
 
-
-
-
-
-
-
-
-
-export interface IComment {
-    id: string;
-    track_id: string;
-    username: string;
-    text: string;
-}
-
-export interface ITrack {
-    id: string;
-    name: string;
-    artist: string;
-    text: string;
-    listens: number;
-    picture: string;
-    audio: string;
-    comments: IComment[]
-}
-
 export interface TrackState {
-    tracks: ITrack[]
+    tracks: TrackResp[]
     error: string
 }
 
@@ -60,7 +34,7 @@ export enum TrackActionTypes {
 
 interface FetchTracksAction {
     type: TrackActionTypes.FETCH_TRACKS
-    payload: ITrack[]
+    payload: TrackResp[]
 }
 
 interface FetchTracksErrorAction {
