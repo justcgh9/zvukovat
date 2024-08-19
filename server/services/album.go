@@ -8,34 +8,34 @@ import (
 
 func CreateAlbum(album models.Album) (models.Album, error) {
 
-    newAlbum, err := repositories.CreateAlbum(album)
-    if err != nil {
-        return models.Album{}, err
-    }
+	newAlbum, err := repositories.CreateAlbum(album)
+	if err != nil {
+		return models.Album{}, err
+	}
 
-    return newAlbum, nil
+	return newAlbum, nil
 }
 
-func AddTrackToAlbum(albumId, trackId string) (error) {
+func AddTrackToAlbum(albumId, trackId string) error {
 
-    _, err := repositories.GetOneTrack(trackId)
-    if err != nil {
-        return errors.New("Failure. Ensure the validity of track identifier")
-    }
+	_, err := repositories.GetOneTrack(trackId)
+	if err != nil {
+		return errors.New("failure. Ensure the validity of track identifier")
+	}
 
-    album, err := repositories.GetAlbum(albumId)
-    if err != nil {
-        return err
-    }
+	album, err := repositories.GetAlbum(albumId)
+	if err != nil {
+		return err
+	}
 
-    return repositories.AddTrackToAlbum(album, trackId)
+	return repositories.AddTrackToAlbum(album, trackId)
 
 }
 
 func GetAlbum(albumId string) (models.Album, error) {
-    return repositories.GetAlbum(albumId)
+	return repositories.GetAlbum(albumId)
 }
 
-func DeleteAlbum(albumId string) (error) {
-    return repositories.RemoveAlbum(albumId)
+func DeleteAlbum(albumId string) error {
+	return repositories.RemoveAlbum(albumId)
 }

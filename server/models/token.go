@@ -1,6 +1,9 @@
 package models
 
 type Token struct {
-    UserId       string   `bson:"user_id,omitempty" json:"user_id"`
-    RefreshToken string   `bson:"refreshToken" json:"refreshToken"`
+    Id       string `bson:"_id,omitempty" json:"id"`
+	UserId       string `bson:"user" json:"user_id"`
+	RefreshToken string `bson:"refreshToken" json:"refreshToken"`
 }
+
+
