@@ -5,7 +5,7 @@ import Image from 'next/image';
 interface IconButtonProps {
   id?: string;
   icon: string;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent) => void;
   alt: string;
   title?: string;
   className?: string;

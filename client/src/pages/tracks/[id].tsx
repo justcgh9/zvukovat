@@ -75,7 +75,7 @@ const ViewTrack = ({serverTrack}: {serverTrack: ITrack}) => {
             </Grid>
             <div>
                 {comments?.map(comment =>
-                    <div>
+                    <div key={comment.id}>
                         <div>Автор - {comment.username}</div>
                         <div>Комментарий - {comment.text}</div>
                     </div>

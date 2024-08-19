@@ -1,49 +1,51 @@
-import { ITrack } from "@/types/track";
-import Card from "@mui/material/Card"
-import Grid from "@mui/material/Grid"
-import styles from "../styles/TrackItem.module.scss"
-import { Delete, Pause, PlayArrow } from "@mui/icons-material";
-import IconButton from '@mui/material/IconButton'
-import { useRouter } from "next/navigation";
-import React, { useActionState } from "react";
-import { useActions } from "@/hooks/useActions";
+import styles from '../styles/TrackItem.module.scss';
+import IconButton from './IconButton';
+import PlayIcon from '../assets/play.svg';
+import PauseIcon from '../assets/pause.svg';
+import Image from 'next/image';
+import FavouriteIcon from '../assets/favourite_icon.svg';
+import FavouriteChosen from '../assets/favourite_chosen.svg';
+import { TrackProps } from '@/types/track';
+import { MouseEvent, useEffect } from 'react';
+import { useActions } from '@/hooks/useActions';
+import {resetCurrentTrack, setCurrentTrack} from "../store/action-creators/current";
+import { useTypedSelector } from '@/hooks/useTypedSelector';
+import { useDispatch } from 'react-redux';
+import { UnknownAction } from 'redux';
 
-interface TrackItemProps {
-    track: ITrack
-    active?: boolean
-}
-
-const TrackItem: React.FC<TrackItemProps> = ({track, active=false} : TrackItemProps) => {
-    const router = useRouter()
-    const {playTrack, pauseTrack, setActiveTrack} = useActions()
+export default function TrackItem({track, isFavourite = false, duration}: TrackProps){
+    let durationInMinutes = `${Math.floor(duration/60)}:${('0' + (duration%60)).slice(-2)}`;
+    const {playTrack, pauseTrack, setActiveTrack} = useActions();
+    const { currentId } = useTypedSelector(state => state.current);
+    const dispatch = useDispatch();
+    console.log(currentId);
 
     const play = (e: React.MouseEvent) => {
+        if (currentId === track.id){
+            dispatch(resetCurrentTrack() as UnknownAction);
+        } else {
+            dispatch(setCurrentTrack(track.id) as UnknownAction);
+        }
+
         e.stopPropagation()
         setActiveTrack(track)
         pauseTrack()
     }
 
-    return (
-        <div>
-            <Card className={styles.track} onClick={() => router.push('/tracks/' + track.id)}>
-                <IconButton onClick={play}>
-                    {active
-                    ? <Pause/>
-                    : <PlayArrow/>
-                    }
-                </IconButton>
-                <img width={70} height={70} src={'http://localhost:8080/files/' + track.picture} alt={track.name + 'picture'}/>
-                <Grid container direction="column" style={{width:200, margin: '0 20px'}}>
-                    <div>{track.name}</div>
-                    <div style={{fontSize: 12, color: 'gray'}}>{track.artist}</div>
-                </Grid>
-                {active && <div>02:42 / 3:22</div>}
-                <IconButton onClick={e => e.stopPropagation()} style={{marginLeft: 'auto'}}>
-                    <Delete/>
-                </IconButton>                    
-            </Card>
-        </div>
-    )
-} 
 
-export default TrackItem;
+
+    return (<div className={styles.track_container}>
+        <div className={styles.track_left_cont}>
+            <IconButton className={styles.playing_btn} icon={(currentId !== track.id) ? PlayIcon : PauseIcon} onClick={play} alt={(currentId !== track.id) ? "Play" : "Pause"}/>
+            <Image className={styles.cover_img} width={64} height={64} src={'http://localhost:8080/files/' + track.picture} alt={track.name}/>
+            <div className={styles.track_info}>
+                <h4 className={styles.track_title}>{track.name}</h4>
+                <p className={styles.track_singer}>{track.artist}</p>
+            </div>
+        </div>
+        <div className={styles.track_right_cont}>
+            <p className={styles.track_time}>{durationInMinutes}</p>
+            <IconButton icon={!isFavourite ? FavouriteIcon : FavouriteChosen} alt={!isFavourite ? 'not favourite' : 'favourite'} onClick={() => isFavourite = !isFavourite}/>
+        </div>
+   </div>);
+}
