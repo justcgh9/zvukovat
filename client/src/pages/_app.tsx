@@ -1,21 +1,23 @@
 import type { AppProps } from "next/app";
-import Navbar from "@/components/Navbar";
+import SideMenu from "@/components/SideMenu";
 import Container from "@mui/material/Container";
 import Player from "@/components/Player";
 import { wrapper } from "@/store";
 import { FC } from "react";
+import './global.scss';
 
 const App: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
-    <>
-      <Navbar/>
-      <Container style={{margin: '90px 0', minHeight: '100%', minWidth: '100%'
-          }}>
-        <Component {...pageProps} />;      
+      <Container style={{minHeight: '100%', minWidth: '100%', margin: 0, display: 'flex', flexDirection: 'row', padding: 0}} >
+        {/* <Navbar/> */}
+        <SideMenu />
+        <Container style={{minHeight: '100%', minWidth: '70vw', margin: '0 auto', padding: 0
+            }}>
+          <Component {...pageProps} />
+        </Container>
+        {/* <Player/> */}
+      
       </Container>
-      <Player/>
-    
-    </>
   )
 }
 

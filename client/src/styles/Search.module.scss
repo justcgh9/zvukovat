@@ -1,0 +1,31 @@
+@import './variables.scss';
+
+.search_container{
+    display: flex;
+    flex-direction: row;
+    padding: 1rem 0.5rem;
+    gap: 1rem;
+    align-items: center;
+    border-bottom: 1px solid $color-light;
+
+    .search_input{
+        border: none;
+        background-color: transparent;
+        font-size: 1.25rem;
+        font-family: $font-roboto-serif;
+        color: $color-light;
+    }
+
+    .search_input:hover{
+        border: none;
+    }
+
+    .search_input:click {
+        border: none;
+    }
+
+    .search_input:focus{
+        border: none;
+        outline: none;
+    }
+}

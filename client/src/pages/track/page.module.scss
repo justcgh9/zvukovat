@@ -1,0 +1,29 @@
+@import '../../styles/variables.scss';
+
+.track_page_cont{
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 0 0;
+    gap: 1rem;
+
+    .main_title{
+        font-size: 3rem;
+        font-family: $font-pilated;
+        font-weight: 600;
+        padding: 0;
+        color: $color-accent;
+        margin: 1rem 0;
+    }
+    
+    .tracklist{
+        gap: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+
+        li{
+            list-style: none;
+        }
+    }
+
+}

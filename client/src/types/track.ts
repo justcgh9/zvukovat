@@ -1,23 +1,29 @@
-export interface IComment {
-    id: string;
-    track_id: string;
-    username: string;
-    text: string;
+import { StaticImageData } from "next/image";
+
+export interface TrackProps{
+    track: TrackResp;
+    isFavourite: boolean;
+    duration: number; // will be past from back
 }
 
-export interface ITrack {
-    id: string;
-    name: string;
+export interface TrackResp {
     artist: string;
-    text: string;
-    listens: number;
-    picture: string;
     audio: string;
-    comments: IComment[]
+    comments: any; //will be deleted
+    id: string;
+    listens: number;
+    name: string;
+    picture: string;
+    text: string;
+    //duration: number;
+}
+
+export interface TracksResp {
+    tracksData: TrackResp[];
 }
 
 export interface TrackState {
-    tracks: ITrack[]
+    tracks: TrackResp[]
     error: string
 }
 
@@ -28,7 +34,7 @@ export enum TrackActionTypes {
 
 interface FetchTracksAction {
     type: TrackActionTypes.FETCH_TRACKS
-    payload: ITrack[]
+    payload: TrackResp[]
 }
 
 interface FetchTracksErrorAction {
