@@ -11,11 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var tokenCollection, trackCollection, commentCollection, albumCollection, userCollection *mongo.Collection
+var tokenCollection, trackCollection, albumCollection, userCollection *mongo.Collection
 
 func Initialize(client *mongo.Client) {
 	trackCollection = client.Database(config.DBName).Collection("tracks")
-	commentCollection = client.Database(config.DBName).Collection("comments")
 	albumCollection = client.Database(config.DBName).Collection("albums")
 	userCollection = client.Database(config.DBName).Collection("users")
 	tokenCollection = client.Database(config.DBName).Collection("tokens")
@@ -132,7 +131,6 @@ func UpdateTrack(track models.Track) (models.Track, error) {
 			{"listens", track.Listens},
 			{"picture", track.Picture},
 			{"audio", track.Audio},
-			{"comments", track.Comments},
 		}},
 	}
 

@@ -58,11 +58,6 @@ func main() {
 	r.HandleFunc("/tracks", routers.GetTracksHandler).Methods("GET")
 	r.HandleFunc("/tracks/{track_id}", routers.GetTrackHandler).Methods("GET")
 	r.HandleFunc("/tracks/{track_id}", routers.DeleteTrack).Methods("DELETE")
-	r.HandleFunc("/tracks/{track_id}/comment", routers.HandleCORS).Methods("OPTIONS")
-	r.HandleFunc("/tracks/{track_id}/comment", routers.CreateComment).Methods("POST")
-	r.HandleFunc("/tracks/{track_id}/comment", routers.GetComments).Methods("GET")
-	r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", routers.EditComment).Methods("PUT")
-	r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", routers.DeleteComment).Methods("DELETE")
 
 	r.HandleFunc("/albums", routers.PostAlbum).Methods("POST")
 	r.HandleFunc("/albums/{album_id}", routers.PostToAlbum).Methods("POST")
