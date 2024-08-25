@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"justcgh9/spotify_clone/server/config"
+	"justcgh9/spotify_clone/server/middlewares"
 	"justcgh9/spotify_clone/server/repositories"
 	"justcgh9/spotify_clone/server/routers"
 	"log"
@@ -47,7 +48,7 @@ func main() {
 	r.HandleFunc("/registration", routers.PostSignUp).Methods("POST")
 	r.HandleFunc("/users", routers.GetUsers).Methods("GET")
 	r.HandleFunc("/user/{user_id}", routers.GetUser).Methods("GET")
-	r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("POST")
+	r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("GET")
 	r.HandleFunc("/activate/{link}", routers.GetActivation).Methods("GET")
 	r.HandleFunc("/logout", routers.PostSignOut).Methods("POST")
 	r.HandleFunc("/login", routers.PostSignIn).Methods("POST")
@@ -68,6 +69,7 @@ func main() {
 	r.HandleFunc("/albums/{album_id}", routers.GetAlbum).Methods("GET")
 	r.HandleFunc("/albums/{album_id}", routers.DeleteAlbum).Methods("DELETE")
 
+    r.Handle("/protected", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.ProtectedHandler)))
 	staticDir := "./files/"
 	fs := http.FileServer(http.Dir(staticDir))
 	r.PathPrefix("/files/").Handler(http.StripPrefix("/files/", fs))

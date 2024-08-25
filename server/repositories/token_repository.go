@@ -44,3 +44,10 @@ func SaveToken(token models.Token) (models.Token,error) {
 
     return token, nil
 }
+
+func FindToken(tokenString string) (error) {
+    var token models.Token
+    filter := bson.M{"refreshToken": tokenString}
+    err := tokenCollection.FindOne(context.TODO(), filter).Decode(&token)
+    return err
+}
