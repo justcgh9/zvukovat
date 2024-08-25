@@ -31,13 +31,6 @@ func DeleteTrack(trackID string) (models.Track, error) {
         return track, err
     }
 
-    for _, commentID := range track.Comments {
-        _, err := DeleteComment(commentID, trackID)
-        if err != nil {
-            return models.Track{}, err
-        }
-    }
-
     err = repositories.DeleteTrack(trackID)
     if err != nil {
         return models.Track{}, err
