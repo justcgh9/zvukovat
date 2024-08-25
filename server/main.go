@@ -58,13 +58,15 @@ func main() {
 	r.HandleFunc("/tracks", routers.GetTracksHandler).Methods("GET")
 	r.HandleFunc("/tracks/{track_id}", routers.GetTrackHandler).Methods("GET")
 	r.HandleFunc("/tracks/{track_id}", routers.DeleteTrack).Methods("DELETE")
+	r.Handle("/tracks/{track_id}/like", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.LikeTrack))).Methods(http.MethodPatch)
+	r.Handle("/tracks/{track_id}/unlike", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.UnlikeTrack))).Methods(http.MethodPatch)
 
 	r.HandleFunc("/albums", routers.PostAlbum).Methods("POST")
 	r.HandleFunc("/albums/{album_id}", routers.PostToAlbum).Methods("POST")
 	r.HandleFunc("/albums/{album_id}", routers.GetAlbum).Methods("GET")
 	r.HandleFunc("/albums/{album_id}", routers.DeleteAlbum).Methods("DELETE")
 
-    r.Handle("/protected", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.ProtectedHandler)))
+	r.Handle("/protected", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.ProtectedHandler)))
 	staticDir := "./files/"
 	fs := http.FileServer(http.Dir(staticDir))
 	r.PathPrefix("/files/").Handler(http.StripPrefix("/files/", fs))

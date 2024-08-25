@@ -36,6 +36,7 @@ func CreateUser(CreateUserDTO models.User) (models.User, error) {
 		Email:          CreateUserDTO.Email,
 		Password:       CreateUserDTO.Password,
 		ActivationLink: CreateUserDTO.ActivationLink,
+        FavouriteTracks: make([]string, 0),
 	}
 
 	return user, nil
@@ -88,4 +89,13 @@ func GetAllUsers() ([]models.User, error) {
 	}
 
 	return users, nil
+}
+
+func UpdateFavourites(user models.User) error {
+    filter := bson.M{"email": user.Email}
+    update := bson.M{"$set": bson.M{
+        "favouriteTracks": user.FavouriteTracks,
+    }}
+    _, err := userCollection.UpdateOne(context.TODO(), filter, update)
+    return err
 }
