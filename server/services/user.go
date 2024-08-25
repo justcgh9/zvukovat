@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"justcgh9/spotify_clone/server/models"
 	"justcgh9/spotify_clone/server/repositories"
+	"net/http"
 	"os"
 
 	"github.com/google/uuid"
@@ -95,6 +96,39 @@ func Login(user models.User) (map[string]string, error) {
 	return tokens, nil
 }
 
+func Refresh(cookie http.Cookie) (map[string] string, error) {
+    userData, err := ValidateRefreshToken(cookie.Value)
+    if err != nil {
+        return nil, err
+    }
+
+    err = repositories.FindToken(cookie.Value)
+    if err != nil {
+        return nil, err
+    }
+
+    user, err := repositories.GetUser(userData.Payload.Email)
+    if err != nil {
+        return nil, err
+    }
+
+    tokens, err := generateTokens(user)
+	if err != nil {
+		return tokens, err
+	}
+
+	userDTO := models.Token{
+		RefreshToken: tokens["refreshToken"],
+		UserId:       user.Id,
+	}
+
+	_, err = repositories.SaveToken(userDTO)
+	if err != nil {
+		return tokens, err
+	}
+    return tokens, nil
+}
+
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
@@ -104,3 +138,6 @@ func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
+
+
+
