@@ -70,6 +70,7 @@ func main() {
 
 	r.Handle("/playlists", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostPlaylist))).Methods(http.MethodPost)
 	r.Handle("/playlists", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.GetMyPlaylists))).Methods(http.MethodGet)
+	r.HandleFunc("/playlists/public", http.HandlerFunc(routers.GetPublicPlaylists)).Methods(http.MethodGet)
 	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.GetPlaylist))).Methods(http.MethodGet)
 	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostToPlaylist))).Methods(http.MethodPost)
 	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.DeletePlaylist))).Methods(http.MethodDelete)
