@@ -176,9 +176,7 @@ func DeleteTrack(w http.ResponseWriter, r *http.Request) {
 }
 
 func LikeTrack(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("I")
 	user := r.Context().Value("user").(*models.UserClaims)
-	fmt.Println("I")
 	trackId := mux.Vars(r)["track_id"]
 	fmt.Println(user.Payload.Email, trackId)
 	trackIds, err := services.LikeTrack(user.Payload.Email, trackId)
