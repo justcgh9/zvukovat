@@ -8,16 +8,17 @@ import './global.scss';
 
 const App: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
+    <>
       <Container style={{minHeight: '100%', minWidth: '100%', margin: 0, display: 'flex', flexDirection: 'row', padding: 0}} >
-        {/* <Navbar/> */}
         <SideMenu />
-        <Container style={{minHeight: '100%', minWidth: '70vw', margin: '0 auto', padding: 0
-            }}>
+        <Container style={{minWidth: '70%', margin: '0 auto', padding: 0}}>
           <Component {...pageProps} />
         </Container>
-        {/* <Player/> */}
+        <Player/>
       
       </Container>
+      
+      </>
   )
 }
 

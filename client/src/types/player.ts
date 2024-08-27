@@ -1,11 +1,18 @@
-import { ITrack } from "./track";
+import { TrackResp } from "./track";
+
+
+export enum TracksOrder {
+    MIX = "MIX",
+    REPEAT = "REPEAT",
+    REPEAT_ONE  = "REPEAT_ONE"
+}
 
 export interface PlayerState {
-    active: null | ITrack;
-    volume: number;
+    active: null | TrackResp;
+    order: TracksOrder;
     duration: number;
     currentTime: number;
-    pause: boolean;
+    isPlaying: boolean;
 }
 
 export enum PlayerActionTypes {
@@ -14,35 +21,35 @@ export enum PlayerActionTypes {
     SET_ACTIVE = "SET_ACTIVE",
     SET_DURATION = "SET_DURATION",
     SET_CURRENT_TIME = "SET_CURRENT_TIME",
-    SET_VOLUME = "SET_VOLUME"
+    SET_ORDER = "SET_ORDER"
 }
 
 interface PlayAction {
-    type: PlayerActionTypes.PLAY
+    type: PlayerActionTypes.PLAY;
 }
 
 interface PauseAction {
-    type: PlayerActionTypes.PAUSE
+    type: PlayerActionTypes.PAUSE;
 }
 
 interface SetActiveAction {
     type: PlayerActionTypes.SET_ACTIVE;
-    payload: ITrack;
+    payload: TrackResp;
 }
 
 interface SetDurationAction {
-    type: PlayerActionTypes.SET_DURATION
+    type: PlayerActionTypes.SET_DURATION;
     payload: number;
 }
 
 interface SetCurrentTimeAction {
-    type: PlayerActionTypes.SET_CURRENT_TIME
-    payload: number
+    type: PlayerActionTypes.SET_CURRENT_TIME;
+    payload: number;
 }
 
-interface SetVolumeAction {
-    type: PlayerActionTypes.SET_VOLUME
-    payload: number
+interface SetOrderAction {
+    type: PlayerActionTypes.SET_ORDER;
+    payload: TracksOrder;
 }
 
 export type PlayerAction = 
@@ -51,7 +58,7 @@ export type PlayerAction =
     |   SetActiveAction
     |   SetCurrentTimeAction
     |   SetDurationAction
-    |   SetVolumeAction
+    |   SetOrderAction
 
 
 

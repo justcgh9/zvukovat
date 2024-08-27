@@ -1,32 +1,21 @@
-import React, { RefObject, useRef } from "react";
+import { FileUploaderProps } from '@/types/create';
+import styles from '../styles/FileUploader.module.scss';
+import Image from 'next/image';
 
-interface FileUploaderProps {
-    setFile: Function
-    accept: string
-    children: React.ReactNode
-}
 
-const FileUploader: React.FC<FileUploaderProps> = ({setFile, accept, children}) => {
-    const ref = useRef<HTMLInputElement>()
-
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files != null) {
-            setFile(e.target.files[0])
-        }
-    }
-
-    return(
-        <div onClick={() => ref.current?.click()}>
-            <input
-                type="file" 
-                accept={accept} 
-                style={{display: "none"}} 
-                ref={ref as RefObject<HTMLInputElement>}
-                onChange={onChange}    
-            ></input>
-            {children}
+export default function FileUploader({label, icon, formats, onChange, accept} : FileUploaderProps){
+    return (<div className={styles.file_uploader}>
+        <div className={styles.heading}>
+            
+            <label className={styles.label} htmlFor='fileinput'>{label}</label>
+            <Image src={icon} alt='label'/>
         </div>
-    )
+        <div className={styles.inner_container}>
+            
+            <div className={styles.input_container}>
+                <input type='file' accept={accept} id='fileinput' className={styles.input} onChange={onChange}></input>
+                <p className={styles.formats}>Formats: {formats}</p>
+            </div>
+        </div>
+    </div>);
 }
-
-export default FileUploader;

@@ -3,7 +3,7 @@ import { StaticImageData } from "next/image";
 export interface TrackProps{
     track: TrackResp;
     isFavourite: boolean;
-    duration: number; // will be past from back
+    // duration: number; // will be past from back
 }
 
 export interface TrackResp {

@@ -9,12 +9,14 @@ import { NextThunkDispatch, wrapper } from '@/store';
 import { useDispatch } from 'react-redux';
 import { fetchTracks, searchTracks } from '@/store/action-creators/track';
 
+
+
 export default function Tracks() {
 
-    const {tracks, error} = useTypedSelector(state => state.track)
-    const [query, setQuery] = useState<string>('')
-    const [timer, setTimer] = useState<any>(null)
-    const dispatch = useDispatch() as NextThunkDispatch
+    const {tracks, error} = useTypedSelector(state => state.track);
+    const [query, setQuery] = useState<string>('');
+    const [timer, setTimer] = useState<any>(null);
+    const dispatch = useDispatch() as NextThunkDispatch;
 
     async function search(e: React.ChangeEvent<HTMLInputElement>) {
         setQuery(e.target.value)
@@ -32,13 +34,15 @@ export default function Tracks() {
         return <h1>{error}</h1>
     }
 
+
+
     return <section className={styles.track_page_cont}>
         <h1 className={styles.main_title}>Tracks</h1>
         <Search onChange={search} value={query}/>
         <ul className={styles.tracklist}>
             {tracks.map((track : TrackResp) => 
-                <li>
-                <TrackItem track={track} isFavourite={true} duration={183}/>
+                <li key={track.id}>
+                <TrackItem track={track} isFavourite={true}/>
                 </li>
             )}
         </ul>
