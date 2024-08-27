@@ -74,6 +74,30 @@ func AddTrackToPlaylist(playlist models.Playlist, trackID string) (error) {
     return nil
 }
 
+func GetPublicPlaylists() ([]models.Playlist, error) {
+
+    filter := bson.M{"isPrivate": false}
+	findOptions := options.Find()
+    findOptions.SetLimit(10)
+
+    var playlists []models.Playlist
+	cursor, err := playlistCollection.Find(context.TODO(), filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	for cursor.Next(context.TODO()) {
+		var playlist models.Playlist
+		if err := cursor.Decode(&playlist); err != nil {
+			return nil, err
+		}
+		playlists = append(playlists, playlist)
+	}
+
+	return playlists, nil
+}
+
 func RemovePlaylist(playlistID string) (error) {
     objId, err := primitive.ObjectIDFromHex(playlistID)
     if err != nil {

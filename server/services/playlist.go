@@ -44,6 +44,10 @@ func GetMyPlaylists(userId string) ([]models.Playlist, error) {
    return repositories.GetMyPlaylists(userId)
 }
 
+func GetPublicPlaylists() ([]models.Playlist , error) {
+    return repositories.GetPublicPlaylists()
+}
+
 func DeletePlaylist(playlistId, owner string) error {
     playlist, err := GetPlaylist(playlistId)
     if err != nil {

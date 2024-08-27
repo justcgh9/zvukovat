@@ -94,6 +94,20 @@ func GetMyPlaylists(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(playlists)
 }
 
+func GetPublicPlaylists(w http.ResponseWriter, r *http.Request) {
+
+    AllowOrigin(w)
+    playlists, err := services.GetPublicPlaylists()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(playlists)
+
+}
+
 func PostToPlaylist(w http.ResponseWriter, r *http.Request) {
 
     AllowOrigin(w)
