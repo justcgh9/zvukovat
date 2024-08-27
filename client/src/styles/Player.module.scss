@@ -8,3 +8,165 @@
     padding: 0 10px;
     background-color: lightgrey;
 }
+
+@import './variables.scss';
+
+.player_container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 81.5%;
+    z-index: 9999;
+    min-width: '80%';
+    background-color: $color-accent-80;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    box-sizing: border-box;
+
+
+    .player_left_container {
+        padding: 0 0.5rem;
+        margin: 0;
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        align-items: center;
+
+        .track_control_container{
+            display: flex;
+            flex-direction: row;
+            gap: 0.25rem;
+        }
+
+        .player_track_cover {
+            border-radius: 100%;
+            transition: transform 0.1s ease;
+        }
+
+        // @keyframes rotate {
+        //     from {
+        //       transform: rotate(0deg);
+        //     }
+        //     to {
+        //       transform: rotate(360deg);
+        //     }
+        //   }
+          
+        // .rotating {
+        // animation: rotate 20s linear infinite;
+        // }
+
+        .track_info{
+            display: flex;
+            flex-direction: column;
+            padding: 0.25rem 0.5rem;
+            gap: 0.5rem;
+        
+            .track_title{
+                font-size: 1rem;
+                font-family: $font-roboto-serif;
+                font-weight: 400;
+                margin: 0;
+                color: $color-light;
+            }
+        
+            .track_singer{
+                font-size: 0.875rem;
+                font-family: $font-roboto-serif;
+                font-weight: 400;
+                margin: 0;
+                color: $color-light;
+            }
+        }
+    }
+
+    .player_right_container{
+        margin: 0;
+        padding: 0 0.5rem;
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        align-items: center;
+
+        .player_time_container {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            align-items: center;
+
+            .track_time{
+                font-size: 1.25rem;
+                font-family: $font-roboto-serif;
+                font-weight: 400;
+                margin: 0;
+                color: $color-light;
+            }
+
+            .player_time_range{
+                -webkit-appearance: none;
+                appearance: none;
+                width: 100%;
+                background-color: transparent;
+                outline: none;
+                transition: opacity 0.2s;
+            }
+
+            .player_time_range::-moz-range-thumb {
+                width: 0.4rem;
+                height: 0.4rem;
+                border: none;
+                background-color: $color-light;
+            }
+
+            .player_time_range::-webkit-slider-thumb {
+                width: 0.4rem;
+                height: 0.4rem;
+                border-radius: 50%;
+                margin-top: -2.2px;
+                border: none;
+                -webkit-appearance: none;
+                appearance: none;
+                background: $color-light;
+                transform: scale 0.5s;
+            }
+
+            .player_time_range::-webkit-slider-runnable-track {
+                height: 2px;
+                background: $color-light-70;
+                border-radius: 2px;
+              }
+              
+            .player_time_range::-moz-range-track {
+                height: 2px;
+                background: $color-light-70;
+                border-radius: 2px;
+            }
+
+            .player_time_range::-moz-range-progress{
+                height: 2px;
+                background: $color-light;
+                border-radius: 2px;
+            }
+
+            .player_time_range::-moz-range-thumb:hover {
+                scale: 1.7;
+            }
+
+            .player_time_range::-webkit-slider-thumb:hover {
+                scale: 1.7;
+            }
+
+            .player_time_range::-moz-range-thumb:active {
+                scale: 1.7;
+            }
+
+            .player_time_range::-webkit-slider-thumb:active {
+                scale: 1.7;
+            }
+        }
+    }
+}
+
