@@ -45,7 +45,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/registration", routers.PostSignUp).Methods("POST")
+    r.HandleFunc("/registration", routers.PostSignUp).Methods("POST")
 	r.HandleFunc("/users", routers.GetUsers).Methods("GET")
 	r.HandleFunc("/user/{user_id}", routers.GetUser).Methods("GET")
 	r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("GET")
@@ -67,6 +67,14 @@ func main() {
 	r.HandleFunc("/albums/{album_id}", routers.DeleteAlbum).Methods("DELETE")
 
 	r.Handle("/protected", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.ProtectedHandler)))
+
+	r.Handle("/playlists", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostPlaylist))).Methods(http.MethodPost)
+	r.Handle("/playlists", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.GetMyPlaylists))).Methods(http.MethodGet)
+	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.GetPlaylist))).Methods(http.MethodGet)
+	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostToPlaylist))).Methods(http.MethodPost)
+	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.DeletePlaylist))).Methods(http.MethodDelete)
+	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.ToggleVisibility))).Methods(http.MethodPatch)
+
 	staticDir := "./files/"
 	fs := http.FileServer(http.Dir(staticDir))
 	r.PathPrefix("/files/").Handler(http.StripPrefix("/files/", fs))

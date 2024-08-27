@@ -18,6 +18,7 @@ func JwtAuthenticationMiddleware(next http.Handler) http.Handler{
         userData, err := services.ValidateAccessToken(tokenString)
         if err != nil {
             http.Error(w, err.Error(), http.StatusUnauthorized)
+            return
         }
 
         ctx := context.WithValue(r.Context(), "user", userData)

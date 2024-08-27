@@ -11,18 +11,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var tokenCollection, trackCollection, albumCollection, userCollection *mongo.Collection
+var playlistCollection, tokenCollection, trackCollection, albumCollection, userCollection *mongo.Collection
 
 func Initialize(client *mongo.Client) {
 	trackCollection = client.Database(config.DBName).Collection("tracks")
 	albumCollection = client.Database(config.DBName).Collection("albums")
 	userCollection = client.Database(config.DBName).Collection("users")
 	tokenCollection = client.Database(config.DBName).Collection("tokens")
+	playlistCollection = client.Database(config.DBName).Collection("playlists")
 }
 
 func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) {
-	var tracks []models.Track
 
+    tracks := make([]models.Track, 0)
 	findOptions := options.Find()
 	if params != nil {
 		findOptions.SetSkip(int64(params.Offset))
@@ -48,7 +49,7 @@ func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) 
 }
 
 func SearchTrack(name string) ([]models.Track, error) {
-	var tracks []models.Track
+    tracks := make([]models.Track, 0)
 
 	filter := bson.D{
 		{
