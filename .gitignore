@@ -1,7 +1,5 @@
 tmp/build-errors.log
 server/tmp
-server/go.mod
-server/go.sum
 server/files
 clientCode
 server/.env
