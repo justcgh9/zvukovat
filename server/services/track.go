@@ -18,8 +18,8 @@ func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) 
 	return repositories.GetAllTracks(params)
 }
 
-func FindTrack(name string) ([]models.Track, error) {
-	return repositories.SearchTrack(name)
+func FindTrack(name, artist string) ([]models.Track, error) {
+	return repositories.SearchTrack(name, artist)
 }
 
 func GetOneTrack(trackID string) (models.Track, error) {
@@ -83,4 +83,8 @@ func UnlikeTrack(email, trackId string) ([]string, error) {
 	user.FavouriteTracks = buff
 	err = repositories.UpdateFavourites(user)
 	return user.FavouriteTracks, err
+}
+
+func GetArtists() ([]string, error) {
+    return repositories.GetArtists()
 }

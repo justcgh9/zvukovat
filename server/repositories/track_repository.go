@@ -48,13 +48,19 @@ func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) 
 	return tracks, nil
 }
 
-func SearchTrack(name string) ([]models.Track, error) {
+func SearchTrack(name, artist string) ([]models.Track, error) {
     tracks := make([]models.Track, 0)
 
 	filter := bson.D{
 		{
 			"name", bson.D{
 				{"$regex", name},
+				{"$options", "i"},
+			},
+		},
+		{
+			"artist", bson.D{
+				{"$regex", artist},
 				{"$options", "i"},
 			},
 		},
@@ -140,4 +146,31 @@ func UpdateTrack(track models.Track) (models.Track, error) {
 		return models.Track{}, err
 	}
 	return track, nil
+}
+
+func GetArtists() ([]string, error) {
+
+    pipeline := mongo.Pipeline{
+        bson.D{{"$group", bson.D{
+            {"_id", bson.D{{"$toLower", "$artist"}}},
+        }}},
+    }
+
+    cursor, err := trackCollection.Aggregate(context.TODO(), pipeline)
+    if err != nil {
+        return nil, err
+    }
+    defer cursor.Close(context.TODO())
+
+    var artists []string
+    for cursor.Next(context.TODO()) {
+        var result struct {
+            Id string `bson:"_id"`
+        }
+        if err := cursor.Decode(&result); err != nil {
+            return nil, err
+        }
+        artists = append(artists, result.Id)
+    }
+    return artists, nil
 }
