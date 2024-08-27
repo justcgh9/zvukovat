@@ -68,6 +68,8 @@ func main() {
 
 	r.Handle("/protected", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.ProtectedHandler)))
 
+	r.HandleFunc("/artists", routers.GetArtists).Methods("GET")
+
 	r.Handle("/playlists", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostPlaylist))).Methods(http.MethodPost)
 	r.Handle("/playlists", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.GetMyPlaylists))).Methods(http.MethodGet)
 	r.HandleFunc("/playlists/public", http.HandlerFunc(routers.GetPublicPlaylists)).Methods(http.MethodGet)

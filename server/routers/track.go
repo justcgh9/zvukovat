@@ -85,7 +85,8 @@ func SearchTrack(w http.ResponseWriter, r *http.Request) {
 	AllowOrigin(w)
 	queryParams := r.URL.Query()
 	name := queryParams.Get("name")
-	tracks, err := services.FindTrack(name)
+	artist := queryParams.Get("artist")
+	tracks, err := services.FindTrack(name, artist)
 	if err != nil {
 		fmt.Println(err.Error())
 		http.Error(w, "Error fetching tracks", http.StatusInternalServerError)
@@ -202,4 +203,14 @@ func UnlikeTrack(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(trackIds)
+}
+
+func GetArtists(w http.ResponseWriter, r *http.Request) {
+    artists, err := services.GetArtists()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(artists)
 }
