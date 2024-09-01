@@ -50,14 +50,14 @@ func main() {
 	r.HandleFunc("/user/{user_id}", routers.GetUser).Methods("GET")
 	r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("GET")
 	r.HandleFunc("/activate/{link}", routers.GetActivation).Methods("GET")
-	r.HandleFunc("/logout", routers.PostSignOut).Methods("POST")
+	r.Handle("/logout", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostSignOut))).Methods(http.MethodPost)
 	r.HandleFunc("/login", routers.PostSignIn).Methods("POST")
 
-	r.HandleFunc("/tracks/upload", routers.PostTrack).Methods("POST")
+	r.Handle("/tracks", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostTrack))).Methods(http.MethodPost)
 	r.HandleFunc("/tracks/search", routers.SearchTrack).Methods("GET")
 	r.HandleFunc("/tracks", routers.GetTracksHandler).Methods("GET")
 	r.HandleFunc("/tracks/{track_id}", routers.GetTrackHandler).Methods("GET")
-	r.HandleFunc("/tracks/{track_id}", routers.DeleteTrack).Methods("DELETE")
+	r.Handle("/tracks/{track_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.DeleteTrack))).Methods(http.MethodDelete)
 	r.Handle("/tracks/{track_id}/like", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.LikeTrack))).Methods(http.MethodPatch)
 	r.Handle("/tracks/{track_id}/unlike", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.UnlikeTrack))).Methods(http.MethodPatch)
 

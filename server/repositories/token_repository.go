@@ -51,3 +51,9 @@ func FindToken(tokenString string) (error) {
     err := tokenCollection.FindOne(context.TODO(), filter).Decode(&token)
     return err
 }
+
+func DeleteToken(userId string) error {
+    filter := bson.M{"user": userId}
+    _, err := tokenCollection.DeleteOne(context.TODO(), filter)
+    return err
+}

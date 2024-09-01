@@ -129,6 +129,10 @@ func Refresh(cookie http.Cookie) (map[string] string, error) {
     return tokens, nil
 }
 
+func Logout(userId string) error {
+    return repositories.DeleteToken(userId)
+}
+
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
