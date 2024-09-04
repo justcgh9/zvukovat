@@ -17,6 +17,14 @@ type UserClaims struct {
 	jwt.RegisteredClaims
 }
 
+type UserDTO struct {
+	Id              string   `bson:"_id,omitempty" json:"id"`
+    Username        string   `json:"username" bson:"username"`
+	Email           string   `json:"email" bson:"email"`
+	IsActivated     bool     `json:"isActivated" bson:"isActivated"`
+	FavouriteTracks []string `json:"favouriteTracks" bson:"favouriteTracks"`
+}
+
 func (user User) ContainsTrack(trackId string) bool {
 	if len(user.FavouriteTracks) <= 0 {
 		return false

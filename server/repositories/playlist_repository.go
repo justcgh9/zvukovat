@@ -10,7 +10,7 @@ import (
 )
 
 func CreatePlaylist(playlist models.Playlist) (models.Playlist, error) {
-    result, err := playlistCollection.InsertOne(context.TODO(), playlist)
+    result, err := PlaylistCollection.InsertOne(context.TODO(), playlist)
     if err != nil {
         return models.Playlist{}, err
     }
@@ -25,7 +25,7 @@ func GetPlaylist(playlistID string) (models.Playlist, error) {
         return models.Playlist{}, err
     }
     filter := bson.D{{"_id", objId}}
-    err = playlistCollection.FindOne(context.TODO(), filter).Decode(&playlist)
+    err = PlaylistCollection.FindOne(context.TODO(), filter).Decode(&playlist)
     if err != nil {
         return models.Playlist{}, err
     }
@@ -39,7 +39,7 @@ func GetMyPlaylists(userId string) ([]models.Playlist, error) {
     findOptions.SetLimit(10)
 
     var playlists []models.Playlist
-	cursor, err := playlistCollection.Find(context.TODO(), filter, findOptions)
+	cursor, err := PlaylistCollection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func AddTrackToPlaylist(playlist models.Playlist, trackID string) (error) {
     filter := bson.D{{"_id", objId}}
 
     update := bson.D{{"$set", bson.D {{"tracks", append(playlist.Tracks, trackID)}}}}
-    _, err = playlistCollection.UpdateOne(context.TODO(), filter, update)
+    _, err = PlaylistCollection.UpdateOne(context.TODO(), filter, update)
     if err != nil {
         return err
     }
@@ -81,7 +81,7 @@ func GetPublicPlaylists() ([]models.Playlist, error) {
     findOptions.SetLimit(10)
 
     var playlists []models.Playlist
-	cursor, err := playlistCollection.Find(context.TODO(), filter, findOptions)
+	cursor, err := PlaylistCollection.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func RemovePlaylist(playlistID string) (error) {
     }
 
     filter := bson.D{{"_id", objId}}
-    _, err = playlistCollection.DeleteOne(context.TODO(), filter)
+    _, err = PlaylistCollection.DeleteOne(context.TODO(), filter)
 
     if err != nil {
         return err
@@ -125,7 +125,7 @@ func SetPlaylistVisibility(playlistId string, visibility bool) error {
     update := bson.M{"$set": bson.M{
         "isPrivate": visibility,
     }}
-    _, err = playlistCollection.UpdateOne(context.TODO(), filter, update)
+    _, err = PlaylistCollection.UpdateOne(context.TODO(), filter, update)
     if err != nil {
         return err
     }

@@ -14,13 +14,13 @@ func SaveToken(token models.Token) (models.Token,error) {
     var tokenData models.Token
     var err error
     filter := bson.D{{"user", token.UserId}}
-    err = tokenCollection.FindOne(context.TODO(), filter).Decode(&tokenData)
+    err = TokenCollection.FindOne(context.TODO(), filter).Decode(&tokenData)
     if err != nil {
         if !errors.Is(err, mongo.ErrNoDocuments){
             return models.Token{}, err
         }
 
-        result, err := tokenCollection.InsertOne(context.TODO(), token)
+        result, err := TokenCollection.InsertOne(context.TODO(), token)
         if err != nil {
             return models.Token{}, err
         }
@@ -36,7 +36,7 @@ func SaveToken(token models.Token) (models.Token,error) {
             {"refreshToken", token.RefreshToken},
         }},
     }
-    _, err = tokenCollection.UpdateOne(context.TODO(), filter, update)
+    _, err = TokenCollection.UpdateOne(context.TODO(), filter, update)
     if err != nil {
         return models.Token{}, err
     }
@@ -48,12 +48,12 @@ func SaveToken(token models.Token) (models.Token,error) {
 func FindToken(tokenString string) (error) {
     var token models.Token
     filter := bson.M{"refreshToken": tokenString}
-    err := tokenCollection.FindOne(context.TODO(), filter).Decode(&token)
+    err := TokenCollection.FindOne(context.TODO(), filter).Decode(&token)
     return err
 }
 
 func DeleteToken(userId string) error {
     filter := bson.M{"user": userId}
-    _, err := tokenCollection.DeleteOne(context.TODO(), filter)
+    _, err := TokenCollection.DeleteOne(context.TODO(), filter)
     return err
 }

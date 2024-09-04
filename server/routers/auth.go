@@ -57,7 +57,7 @@ func PostSignIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	userData, err := services.Login(user)
+	userData, fetchedUser, err := services.Login(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
@@ -71,10 +71,20 @@ func PostSignIn(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(30 * 24 * time.Hour),
 	}
 
+    userDto := models.UserDTO{
+        Id: fetchedUser.Id,
+        Email: fetchedUser.Email,
+        Username: fetchedUser.Username,
+        IsActivated: fetchedUser.IsActivated,
+        FavouriteTracks: fetchedUser.FavouriteTracks,
+    }
+
 	w.Header().Add("Set-Cookie", fmt.Sprintf("%s;Partitioned", cookie.String()))
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(userData)
-	fmt.Println(userData)
+	response := make(map[string]interface{})
+	response["tokens"] = userData
+	response["user"] = userDto
+	json.NewEncoder(w).Encode(response)
 
 	return
 }
