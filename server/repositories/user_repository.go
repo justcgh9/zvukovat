@@ -97,6 +97,8 @@ func UpdateFavourites(user models.User) error {
     update := bson.M{"$set": bson.M{
         "favouriteTracks": user.FavouriteTracks,
     }}
+
     _, err := UserCollection.UpdateOne(context.TODO(), filter, update)
+
     return err
 }

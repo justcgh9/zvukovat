@@ -11,6 +11,7 @@ import (
 
 func CreatePlaylist(playlist models.Playlist) (models.Playlist, error) {
     result, err := PlaylistCollection.InsertOne(context.TODO(), playlist)
+
     if err != nil {
         return models.Playlist{}, err
     }
@@ -26,6 +27,7 @@ func GetPlaylist(playlistID string) (models.Playlist, error) {
     }
     filter := bson.D{{"_id", objId}}
     err = PlaylistCollection.FindOne(context.TODO(), filter).Decode(&playlist)
+
     if err != nil {
         return models.Playlist{}, err
     }
@@ -34,12 +36,13 @@ func GetPlaylist(playlistID string) (models.Playlist, error) {
 
 func GetMyPlaylists(userId string) ([]models.Playlist, error) {
 
-    filter := bson.M{"owner": userId}
+  filter := bson.M{"owner": userId}
 	findOptions := options.Find()
-    findOptions.SetLimit(10)
+  findOptions.SetLimit(10)
 
-    var playlists []models.Playlist
+  var playlists []models.Playlist
 	cursor, err := PlaylistCollection.Find(context.TODO(), filter, findOptions)
+
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +70,8 @@ func AddTrackToPlaylist(playlist models.Playlist, trackID string) (error) {
 
     update := bson.D{{"$set", bson.D {{"tracks", append(playlist.Tracks, trackID)}}}}
     _, err = PlaylistCollection.UpdateOne(context.TODO(), filter, update)
+
+
     if err != nil {
         return err
     }
@@ -76,12 +81,14 @@ func AddTrackToPlaylist(playlist models.Playlist, trackID string) (error) {
 
 func GetPublicPlaylists() ([]models.Playlist, error) {
 
-    filter := bson.M{"isPrivate": false}
+  filter := bson.M{"isPrivate": false}
 	findOptions := options.Find()
-    findOptions.SetLimit(10)
+  findOptions.SetLimit(10)
 
-    var playlists []models.Playlist
+  var playlists []models.Playlist
+
 	cursor, err := PlaylistCollection.Find(context.TODO(), filter, findOptions)
+
 	if err != nil {
 		return nil, err
 	}
@@ -126,6 +133,7 @@ func SetPlaylistVisibility(playlistId string, visibility bool) error {
         "isPrivate": visibility,
     }}
     _, err = PlaylistCollection.UpdateOne(context.TODO(), filter, update)
+
     if err != nil {
         return err
     }

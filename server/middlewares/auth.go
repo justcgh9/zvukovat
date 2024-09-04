@@ -20,12 +20,11 @@ func JwtAuthenticationMiddleware(next http.Handler) http.Handler{
             http.Error(w, err.Error(), http.StatusUnauthorized)
             return
         }
-
+        
         if !userData.Payload.IsActivated {
             http.Error(w, "Account is not activated", http.StatusUnauthorized)
             return
         }
-
         ctx := context.WithValue(r.Context(), "user", userData)
         r = r.WithContext(ctx)
 

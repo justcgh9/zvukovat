@@ -86,6 +86,7 @@ func PostSignIn(w http.ResponseWriter, r *http.Request) {
 	response["user"] = userDto
 	json.NewEncoder(w).Encode(response)
 
+
 	return
 }
 func PostSignOut(w http.ResponseWriter, r *http.Request) {
@@ -119,7 +120,8 @@ func GetActivation(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func GetRefreshedToken(w http.ResponseWriter, r *http.Request) {
-    AllowOrigin(w)
+  AllowOrigin(w)
+
 	refreshCookie, err := r.Cookie("refreshToken")
 	if err != nil {
 		http.Error(w, "Ivalid refreshToken cookie", http.StatusForbidden)
@@ -173,7 +175,8 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
-    AllowOrigin(w)
+  AllowOrigin(w)
+
 	user := r.Context().Value("user").(*models.UserClaims)
 	fmt.Fprintf(w, "Hello, %s!", user.Payload.Email)
 }

@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+
 var PlaylistCollection, TokenCollection, TrackCollection, AlbumCollection, UserCollection *mongo.Collection
 
 func Initialize(client *mongo.Client) {
@@ -19,6 +20,7 @@ func Initialize(client *mongo.Client) {
 	UserCollection = client.Database(config.DBName).Collection("users")
 	TokenCollection = client.Database(config.DBName).Collection("tokens")
 	PlaylistCollection = client.Database(config.DBName).Collection("playlists")
+
 }
 
 func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) {
@@ -155,6 +157,7 @@ func GetArtists() ([]string, error) {
             {"_id", bson.D{{"$toLower", "$artist"}}},
         }}},
     }
+
 
     cursor, err := TrackCollection.Aggregate(context.TODO(), pipeline)
     if err != nil {

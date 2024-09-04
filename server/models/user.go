@@ -4,7 +4,7 @@ import "github.com/golang-jwt/jwt/v5"
 
 type User struct {
 	Id              string   `bson:"_id,omitempty" json:"id"`
-    Username        string   `json:"username" bson:"username"`
+  Username        string   `json:"username" bson:"username"`
 	Email           string   `json:"email" bson:"email"`
 	Password        string   `json:"password" bson:"password"`
 	IsActivated     bool     `json:"isActivated" bson:"isActivated"`
@@ -19,7 +19,7 @@ type UserClaims struct {
 
 type UserDTO struct {
 	Id              string   `bson:"_id,omitempty" json:"id"`
-    Username        string   `json:"username" bson:"username"`
+  Username        string   `json:"username" bson:"username"`
 	Email           string   `json:"email" bson:"email"`
 	IsActivated     bool     `json:"isActivated" bson:"isActivated"`
 	FavouriteTracks []string `json:"favouriteTracks" bson:"favouriteTracks"`

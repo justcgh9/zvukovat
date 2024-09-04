@@ -14,7 +14,9 @@ import (
 
 func PostPlaylist(w http.ResponseWriter, r *http.Request) {
 
-	user := r.Context().Value("user").(*models.UserClaims)
+
+  	user := r.Context().Value("user").(*models.UserClaims)
+
     err := r.ParseMultipartForm(10 << 20)
     if err != nil {
         http.Error(w, "Error parsing form data", http.StatusBadRequest)
@@ -24,8 +26,8 @@ func PostPlaylist(w http.ResponseWriter, r *http.Request) {
     var createPlaylistDTO models.Playlist
     createPlaylistDTO.Tracks = make([]string, 0)
     createPlaylistDTO.Name = r.FormValue("name")
-
     createPlaylistDTO.Owner = user.Payload.Id
+
     pictureFile, pictureHeader, err := r.FormFile("picture")
     if err == nil {
         createPlaylistDTO.Picture, err = services.SaveFile(pictureFile, pictureHeader, uploadDir, "picture")
@@ -137,7 +139,8 @@ func DeletePlaylist(w http.ResponseWriter, r *http.Request) {
     AllowOrigin(w)
     var playlistID string
     playlistID = mux.Vars(r)["playlist_id"]
-	user := r.Context().Value("user").(*models.UserClaims)
+  	user := r.Context().Value("user").(*models.UserClaims)
+
 
     playlist, err := services.GetPlaylist(playlistID)
 
@@ -157,13 +160,14 @@ func DeletePlaylist(w http.ResponseWriter, r *http.Request) {
         http.Error(w, err.Error(), http.StatusNotFound)
         return
     }
+
     fmt.Fprintf(w, "Playlist with id %s deleted successfully", playlistID)
 }
 
 func ToggleVisibility(w http.ResponseWriter, r *http.Request) {
     AllowOrigin(w)
 
-	user := r.Context().Value("user").(*models.UserClaims)
+	  user := r.Context().Value("user").(*models.UserClaims)
     var playlistID string
     playlistID = mux.Vars(r)["playlist_id"]
 

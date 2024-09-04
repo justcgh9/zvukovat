@@ -133,6 +133,39 @@ func Logout(userId string) error {
     return repositories.DeleteToken(userId)
 }
 
+func Refresh(cookie http.Cookie) (map[string] string, error) {
+    userData, err := ValidateRefreshToken(cookie.Value)
+    if err != nil {
+        return nil, err
+    }
+
+    err = repositories.FindToken(cookie.Value)
+    if err != nil {
+        return nil, err
+    }
+
+    user, err := repositories.GetUser(userData.Payload.Email)
+    if err != nil {
+        return nil, err
+    }
+
+    tokens, err := generateTokens(user)
+	if err != nil {
+		return tokens, err
+	}
+
+	userDTO := models.Token{
+		RefreshToken: tokens["refreshToken"],
+		UserId:       user.Id,
+	}
+
+	_, err = repositories.SaveToken(userDTO)
+	if err != nil {
+		return tokens, err
+	}
+    return tokens, nil
+}
+
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
