@@ -11,14 +11,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var playlistCollection, tokenCollection, trackCollection, albumCollection, userCollection *mongo.Collection
+
+var PlaylistCollection, TokenCollection, TrackCollection, AlbumCollection, UserCollection *mongo.Collection
 
 func Initialize(client *mongo.Client) {
-	trackCollection = client.Database(config.DBName).Collection("tracks")
-	albumCollection = client.Database(config.DBName).Collection("albums")
-	userCollection = client.Database(config.DBName).Collection("users")
-	tokenCollection = client.Database(config.DBName).Collection("tokens")
-	playlistCollection = client.Database(config.DBName).Collection("playlists")
+	TrackCollection = client.Database(config.DBName).Collection("tracks")
+	AlbumCollection = client.Database(config.DBName).Collection("albums")
+	UserCollection = client.Database(config.DBName).Collection("users")
+	TokenCollection = client.Database(config.DBName).Collection("tokens")
+	PlaylistCollection = client.Database(config.DBName).Collection("playlists")
+
 }
 
 func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) {
@@ -31,7 +33,7 @@ func GetAllTracks(params *models.TrackPaginationParams) ([]models.Track, error) 
 	} else {
 		findOptions.SetLimit(int64(10))
 	}
-	cursor, err := trackCollection.Find(context.TODO(), bson.D{}, findOptions)
+	cursor, err := TrackCollection.Find(context.TODO(), bson.D{}, findOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +68,7 @@ func SearchTrack(name, artist string) ([]models.Track, error) {
 		},
 	}
 
-	cursor, err := trackCollection.Find(context.TODO(), filter)
+	cursor, err := TrackCollection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +92,7 @@ func GetOneTrack(id string) (models.Track, error) {
 		return models.Track{}, err
 	}
 	filter := bson.D{{"_id", objId}}
-	err = trackCollection.FindOne(context.TODO(), filter).Decode(&track)
+	err = TrackCollection.FindOne(context.TODO(), filter).Decode(&track)
 	if err != nil {
 		return models.Track{}, err
 	}
@@ -99,7 +101,7 @@ func GetOneTrack(id string) (models.Track, error) {
 
 func AddTrack(track models.Track) (models.Track, error) {
 	track.Id = ""
-	result, err := trackCollection.InsertOne(context.TODO(), track)
+	result, err := TrackCollection.InsertOne(context.TODO(), track)
 	if err != nil {
 		return models.Track{}, err
 	}
@@ -114,7 +116,7 @@ func DeleteTrack(id string) error {
 	}
 
 	filter := bson.D{{"_id", objId}}
-	_, err = trackCollection.DeleteOne(context.TODO(), filter)
+	_, err = TrackCollection.DeleteOne(context.TODO(), filter)
 
 	if err != nil {
 		return err
@@ -141,7 +143,7 @@ func UpdateTrack(track models.Track) (models.Track, error) {
 		}},
 	}
 
-	_, err = trackCollection.UpdateOne(context.TODO(), filter, update)
+	_, err = TrackCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		return models.Track{}, err
 	}
@@ -156,7 +158,8 @@ func GetArtists() ([]string, error) {
         }}},
     }
 
-    cursor, err := trackCollection.Aggregate(context.TODO(), pipeline)
+
+    cursor, err := TrackCollection.Aggregate(context.TODO(), pipeline)
     if err != nil {
         return nil, err
     }

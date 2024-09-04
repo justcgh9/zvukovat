@@ -62,24 +62,24 @@ func Registration(user models.User) (map[string]string, models.User, error) {
 	return tokens, createdUser, nil
 }
 
-func Login(user models.User) (map[string]string, error) {
+func Login(user models.User) (map[string]string, models.User, error) {
     var tokens map[string]string
 
     fetchedUser, err := repositories.GetUser(user.Email)
     if err != nil {
-        return tokens, err
+        return tokens, models.User{}, err
     }
 
     if !checkPasswordHash(user.Password, fetchedUser.Password) {
-        return tokens, errors.New("Incorrect password!")
+        return tokens, models.User{}, errors.New("Incorrect password!")
     }
 
     if !fetchedUser.IsActivated {
-        return tokens, errors.New("Account is not activated!")
+        return tokens, models.User{}, errors.New("Account is not activated!")
     }
     tokens, err = generateTokens(fetchedUser)
 	if err != nil {
-		return tokens, err
+		return tokens, models.User{}, err
 	}
 
 	userDTO := models.Token{
@@ -89,11 +89,48 @@ func Login(user models.User) (map[string]string, error) {
 
 	_, err = repositories.SaveToken(userDTO)
 	if err != nil {
-		return tokens, err
+		return tokens, models.User{}, err
 	}
 
 
-	return tokens, nil
+	return tokens, fetchedUser, nil
+}
+
+func Refresh(cookie http.Cookie) (map[string] string, error) {
+    userData, err := ValidateRefreshToken(cookie.Value)
+    if err != nil {
+        return nil, err
+    }
+
+    err = repositories.FindToken(cookie.Value)
+    if err != nil {
+        return nil, err
+    }
+
+    user, err := repositories.GetUser(userData.Payload.Email)
+    if err != nil {
+        return nil, err
+    }
+
+    tokens, err := generateTokens(user)
+	if err != nil {
+		return tokens, err
+	}
+
+	userDTO := models.Token{
+		RefreshToken: tokens["refreshToken"],
+		UserId:       user.Id,
+	}
+
+	_, err = repositories.SaveToken(userDTO)
+	if err != nil {
+		return tokens, err
+	}
+    return tokens, nil
+}
+
+func Logout(userId string) error {
+    return repositories.DeleteToken(userId)
 }
 
 func Refresh(cookie http.Cookie) (map[string] string, error) {
