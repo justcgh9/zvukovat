@@ -16,7 +16,8 @@ func HandleCORS(w http.ResponseWriter, r *http.Request) {
 
     AllowOrigin(w)
     w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
-    w.Header().Set("Access-Control-Allow-Headers", "Content-type, Cookie")
+    w.Header().Set("Access-Control-Allow-Headers", "Content-type, Cookie, Authorization")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
     w.WriteHeader(http.StatusOK)
 }
 

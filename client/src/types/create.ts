@@ -2,6 +2,9 @@ export interface TextInputProps {
     label: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     value: string;
+    background?: boolean;
+    isStretch?: boolean;
+    type?: string;
 }
 
 export interface TextAreaInputProps {

@@ -4,11 +4,13 @@ import {HYDRATE} from 'next-redux-wrapper';
 import { trackReducer } from "./trackReducer";
 import {currentReducer} from "./currentReducer";
 import { current } from "@reduxjs/toolkit";
+import { userReducer } from "./userReducer";
 
 const rootReducer = combineReducers({
     player: playerReducer,
     track: trackReducer,
-    current: currentReducer
+    current: currentReducer,
+    user: userReducer
 })
 
 export const reducer = (state: any, action: any) => {

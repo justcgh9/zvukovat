@@ -44,12 +44,14 @@ func main() {
 
 	r := mux.NewRouter()
 
+	r.HandleFunc("/registration", routers.HandleCORS).Methods("OPTIONS")
 	r.HandleFunc("/registration", routers.PostSignUp).Methods("POST")
 	r.HandleFunc("/users", routers.GetUsers).Methods("GET")
 	r.HandleFunc("/user/{user_id}", routers.GetUser).Methods("GET")
 	r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("POST")
 	r.HandleFunc("/activate/{link}", routers.GetActivation).Methods("GET")
 	r.HandleFunc("/logout", routers.PostSignOut).Methods("POST")
+	r.HandleFunc("/login", routers.HandleCORS).Methods("OPTIONS")
 	r.HandleFunc("/login", routers.PostSignIn).Methods("POST")
 
 	r.HandleFunc("/tracks/upload", routers.PostTrack).Methods("POST")

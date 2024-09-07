@@ -13,6 +13,7 @@ import (
 )
 
 func PostSignUp(w http.ResponseWriter, r *http.Request) {
+	AllowOrigin(w)
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -49,6 +50,7 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostSignIn(w http.ResponseWriter, r *http.Request) {
+	AllowOrigin(w)
 	var user models.User
 
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -66,9 +68,11 @@ func PostSignIn(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func PostSignOut(w http.ResponseWriter, r *http.Request) {
+	AllowOrigin(w)
 	return
 }
 func GetActivation(w http.ResponseWriter, r *http.Request) {
+	AllowOrigin(w)
 	activationLink := mux.Vars(r)["link"]
 	user, err := repositories.ActivateUser(activationLink)
 	fmt.Println(activationLink)
@@ -81,6 +85,7 @@ func GetActivation(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func GetRefreshedToken(w http.ResponseWriter, r *http.Request) {
+	AllowOrigin(w)
 	return
 }
 func GetUsers(w http.ResponseWriter, r *http.Request) {

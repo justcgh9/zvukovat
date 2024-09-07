@@ -1,5 +1,5 @@
 import TrackItem from '@/components/TrackItem';
-import styles from './page.module.scss';
+import styles from '../../styles/TrackPage.module.scss';
 import Search from '@/components/Search';
 import axios, { AxiosResponse } from 'axios';
 import { TrackResp, TracksResp } from '@/types/track';
@@ -19,13 +19,13 @@ export default function Tracks() {
     const dispatch = useDispatch() as NextThunkDispatch;
 
     async function search(e: React.ChangeEvent<HTMLInputElement>) {
-        setQuery(e.target.value)
+        setQuery(e.target.value);
         if (timer) {
-            clearTimeout(timer)
+            clearTimeout(timer);
         }
         setTimer(
             setTimeout(async () => {
-                await dispatch(await searchTracks(e.target.value))
+                await dispatch(await searchTracks(e.target.value));
             }, 350)
         )
         // console.log(tracks)
@@ -51,7 +51,7 @@ export default function Tracks() {
 }
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async (context) =>{
-    const dispatch = store.dispatch as NextThunkDispatch
-    await dispatch(await fetchTracks())
+    const dispatch = store.dispatch as NextThunkDispatch;
+    await dispatch(await fetchTracks());
     return {props: {id: null}}; 
   });
