@@ -9,7 +9,7 @@ import (
 )
 
 func CreateAlbum(album models.Album) (models.Album, error) {
-    result, err := albumCollection.InsertOne(context.TODO(), album)
+    result, err := AlbumCollection.InsertOne(context.TODO(), album)
     if err != nil {
         return models.Album{}, err
     }
@@ -24,7 +24,7 @@ func GetAlbum(albumID string) (models.Album, error) {
         return models.Album{}, err
     }
     filter := bson.D{{"_id", objId}}
-    err = albumCollection.FindOne(context.TODO(), filter).Decode(&album)
+    err = AlbumCollection.FindOne(context.TODO(), filter).Decode(&album)
     if err != nil {
         return models.Album{}, err
     }
@@ -41,7 +41,7 @@ func AddTrackToAlbum(album models.Album, trackID string) (error) {
     filter := bson.D{{"_id", objId}}
 
     update := bson.D{{"$set", bson.D {{"tracks", append(album.Tracks, trackID)}}}}
-    _, err = albumCollection.UpdateOne(context.TODO(), filter, update)
+    _, err = AlbumCollection.UpdateOne(context.TODO(), filter, update)
     if err != nil {
         return nil
     }
@@ -56,7 +56,7 @@ func RemoveAlbum(albumID string) (error) {
     }
 
     filter := bson.D{{"_id", objId}}
-    _, err = albumCollection.DeleteOne(context.TODO(), filter)
+    _, err = AlbumCollection.DeleteOne(context.TODO(), filter)
 
     if err != nil {
         return err

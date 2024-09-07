@@ -18,7 +18,7 @@ func SendActivationMail(to, link string) error {
         <div>
             <h1>Good Afternoon!</h1>
             <p>To activate your account on zvukovat follow the link below.</p>
-            <a href="%s">example.com</a>
+            <a href="%s">Zvukovat'!</a>
             <p>Have a good time using our service!</p>
         </div>
     `, link)

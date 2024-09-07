@@ -101,9 +101,18 @@ func DeleteAlbum(w http.ResponseWriter, r *http.Request) {
     var albumID string
     albumID = mux.Vars(r)["album_id"]
 
-    err := services.DeleteAlbum(albumID)
+    album, err := services.GetAlbum(albumID)
+
+    err = services.DeleteAlbum(albumID)
     if err != nil {
         http.Error(w, err.Error(), http.StatusNotFound)
+        return
+    }
+
+    err = services.DeleteFile(album.Picture, uploadDir)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusNotFound)
+        return
     }
 
     fmt.Fprintf(w, "Album with id %s deleted successfully", albumID)

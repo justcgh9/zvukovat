@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"justcgh9/spotify_clone/server/config"
+	"justcgh9/spotify_clone/server/middlewares"
 	"justcgh9/spotify_clone/server/repositories"
 	"justcgh9/spotify_clone/server/routers"
 	"log"
@@ -48,27 +49,36 @@ func main() {
 	r.HandleFunc("/registration", routers.PostSignUp).Methods("POST")
 	r.HandleFunc("/users", routers.GetUsers).Methods("GET")
 	r.HandleFunc("/user/{user_id}", routers.GetUser).Methods("GET")
-	r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("POST")
+	r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("GET")
 	r.HandleFunc("/activate/{link}", routers.GetActivation).Methods("GET")
 	r.HandleFunc("/logout", routers.PostSignOut).Methods("POST")
 	r.HandleFunc("/login", routers.HandleCORS).Methods("OPTIONS")
 	r.HandleFunc("/login", routers.PostSignIn).Methods("POST")
 
-	r.HandleFunc("/tracks/upload", routers.PostTrack).Methods("POST")
+	r.Handle("/tracks", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostTrack))).Methods(http.MethodPost)
 	r.HandleFunc("/tracks/search", routers.SearchTrack).Methods("GET")
 	r.HandleFunc("/tracks", routers.GetTracksHandler).Methods("GET")
 	r.HandleFunc("/tracks/{track_id}", routers.GetTrackHandler).Methods("GET")
-	r.HandleFunc("/tracks/{track_id}", routers.DeleteTrack).Methods("DELETE")
-	r.HandleFunc("/tracks/{track_id}/comment", routers.HandleCORS).Methods("OPTIONS")
-	r.HandleFunc("/tracks/{track_id}/comment", routers.CreateComment).Methods("POST")
-	r.HandleFunc("/tracks/{track_id}/comment", routers.GetComments).Methods("GET")
-	r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", routers.EditComment).Methods("PUT")
-	r.HandleFunc("/tracks/{track_id}/comment/{comment_id}", routers.DeleteComment).Methods("DELETE")
+	r.Handle("/tracks/{track_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.DeleteTrack))).Methods(http.MethodDelete)
+	r.Handle("/tracks/{track_id}/like", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.LikeTrack))).Methods(http.MethodPatch)
+	r.Handle("/tracks/{track_id}/unlike", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.UnlikeTrack))).Methods(http.MethodPatch)
 
 	r.HandleFunc("/albums", routers.PostAlbum).Methods("POST")
 	r.HandleFunc("/albums/{album_id}", routers.PostToAlbum).Methods("POST")
 	r.HandleFunc("/albums/{album_id}", routers.GetAlbum).Methods("GET")
 	r.HandleFunc("/albums/{album_id}", routers.DeleteAlbum).Methods("DELETE")
+
+	r.Handle("/protected", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.ProtectedHandler)))
+
+	r.HandleFunc("/artists", routers.GetArtists).Methods("GET")
+
+	r.Handle("/playlists", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostPlaylist))).Methods(http.MethodPost)
+	r.Handle("/playlists", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.GetMyPlaylists))).Methods(http.MethodGet)
+	r.HandleFunc("/playlists/public", http.HandlerFunc(routers.GetPublicPlaylists)).Methods(http.MethodGet)
+	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.GetPlaylist))).Methods(http.MethodGet)
+	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostToPlaylist))).Methods(http.MethodPost)
+	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.DeletePlaylist))).Methods(http.MethodDelete)
+	r.Handle("/playlists/{playlist_id}", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.ToggleVisibility))).Methods(http.MethodPatch)
 
 	staticDir := "./files/"
 	fs := http.FileServer(http.Dir(staticDir))

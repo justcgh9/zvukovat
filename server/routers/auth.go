@@ -33,7 +33,6 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
 		Value:    tokens["refreshToken"],
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
 		Path:     "/",
 		Expires:  time.Now().Add(30 * 24 * time.Hour),
 	}
@@ -50,7 +49,7 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostSignIn(w http.ResponseWriter, r *http.Request) {
-	AllowOrigin(w)
+    AllowOrigin(w)
 	var user models.User
 
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -58,17 +57,53 @@ func PostSignIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	userData, err := services.Login(user)
+	userData, fetchedUser, err := services.Login(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	fmt.Println(userData)
+	cookie := &http.Cookie{
+		Name:     "refreshToken",
+		Value:    userData["refreshToken"],
+		HttpOnly: true,
+		Secure:   true,
+		Path:     "/",
+		Expires:  time.Now().Add(30 * 24 * time.Hour),
+	}
+
+    userDto := models.UserDTO{
+        Id: fetchedUser.Id,
+        Email: fetchedUser.Email,
+        Username: fetchedUser.Username,
+        IsActivated: fetchedUser.IsActivated,
+        FavouriteTracks: fetchedUser.FavouriteTracks,
+    }
+
+	w.Header().Add("Set-Cookie", fmt.Sprintf("%s;Partitioned", cookie.String()))
+	w.Header().Set("Content-Type", "application/json")
+	response := make(map[string]interface{})
+	response["tokens"] = userData
+	response["user"] = userDto
+	json.NewEncoder(w).Encode(response)
+
 
 	return
 }
 func PostSignOut(w http.ResponseWriter, r *http.Request) {
-	AllowOrigin(w)
+    AllowOrigin(w)
+	user := r.Context().Value("user").(*models.UserClaims)
+    err := services.Logout(user.Payload.Id)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+	cookie := &http.Cookie{
+		Name:     "refreshToken",
+		Value:    "",
+		Path:     "/",
+        MaxAge: -1,
+	}
+	w.Header().Add("Set-Cookie", fmt.Sprintf("%s;Partitioned", cookie.String()))
 	return
 }
 func GetActivation(w http.ResponseWriter, r *http.Request) {
@@ -85,10 +120,37 @@ func GetActivation(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func GetRefreshedToken(w http.ResponseWriter, r *http.Request) {
-	AllowOrigin(w)
+  AllowOrigin(w)
+
+	refreshCookie, err := r.Cookie("refreshToken")
+	if err != nil {
+		http.Error(w, "Ivalid refreshToken cookie", http.StatusForbidden)
+		return
+	}
+
+	userData, err := services.Refresh(*refreshCookie)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	cookie := &http.Cookie{
+		Name:     "refreshToken",
+		Value:    userData["refreshToken"],
+		HttpOnly: true,
+		Secure:   true,
+		Path:     "/",
+		Expires:  time.Now().Add(30 * 24 * time.Hour),
+	}
+
+	w.Header().Add("Set-Cookie", fmt.Sprintf("%s;Partitioned", cookie.String()))
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(userData)
+	fmt.Println(userData)
+
 	return
 }
 func GetUsers(w http.ResponseWriter, r *http.Request) {
+    AllowOrigin(w)
 	users, err := repositories.GetAllUsers()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -99,6 +161,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func GetUser(w http.ResponseWriter, r *http.Request) {
+    AllowOrigin(w)
 	user_id := mux.Vars(r)["user_id"]
 	user, err := repositories.GetUser(user_id)
 	fmt.Println(user_id)
@@ -109,4 +172,11 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 	json.NewEncoder(w).Encode(user)
 
+}
+
+func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
+  AllowOrigin(w)
+
+	user := r.Context().Value("user").(*models.UserClaims)
+	fmt.Fprintf(w, "Hello, %s!", user.Payload.Email)
 }
