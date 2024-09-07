@@ -8,6 +8,7 @@ import AudioFileIcon from '../../assets/audio_file_icon.svg';
 import { MouseEvent, useState } from 'react';
 import axios from 'axios';
 import router from 'next/router';
+import api from '@/http';
 
 export default function CreateTrack(){
     const title = useInput('');
@@ -50,10 +51,7 @@ export default function CreateTrack(){
 
     async function handleSubmit(event: MouseEvent<HTMLButtonElement, Event>) {
         event.preventDefault();
-        console.log(title.value, performer.value, lyrics.value, cover.value, audioFile.value);
-        console.log("befor", errors);
         checkInput();
-        console.log("after", errors);
         if (errors.length === 0){
             const formData = new FormData();
             formData.append('name', title.value);
@@ -61,7 +59,7 @@ export default function CreateTrack(){
             formData.append('text', lyrics.value);
             formData.append('picture', cover.value!);
             formData.append('audio', audioFile.value!);
-            axios.post('http://localhost:8080/tracks/upload', formData)
+            api.post('/tracks/upload', formData)
                 .then(resp => router.push('/track'))
                 .catch(e => console.log(e));
         }
@@ -96,73 +94,3 @@ export default function CreateTrack(){
         </form>
     </section>);
 }
-
-// async function submitQuestion(event: FormEvent) {
-//     event.preventDefault();
-//     if (submitQuestionCheck() && errorMark === '' && errorYear === '') {
-//       if (task !== null && task.id !== null && valueMark !== undefined) {
-//         const newTask: TaskResponse = {
-//           id: task?.id,
-//           content: inputValueText,
-//           document_id: task.document_id,
-//           marks: valueMark,
-//           page: task.page,
-//           topic: topicIndex,
-//           verified: null,
-//           year: selectedYear,
-//         };
-//         const createResponse: AxiosResponse<TaskResponse> = await axios.patch(
-//           `https://chartreuse-binghamite1373.my-vm.work/task/${task.id}`,
-//           newTask,
-//         );
-//         if (createResponse.status === 200) {
-//           console.log('submited');
-//           setShowChart(false);
-//           afterSave();
-//         }
-//       } else {
-//         const newTask: TaskCreateRequest = {
-//           content: inputValueText,
-//           document_id: null,
-//           marks: valueMark,
-//           page: null,
-//           topic: topicIndex,
-//           verified: null,
-//           year: selectedYear,
-//         };
-//         const createResponse: AxiosResponse<TaskResponse> = await axios.post(
-//           `https://chartreuse-binghamite1373.my-vm.work/task/`,
-//           newTask,
-//         );
-//         if (createResponse.status === 200) {
-//           console.log('submited');
-//           afterSave();
-//         }
-//       }
-//     } else {
-//       console.log('ne submit');
-//     }
-//   }
-
-
-// function submitQuestionCheck() {
-//     let newErrors = 0;
-//     if (
-//       inputValueText.trim().length === 0 ||
-//       inputValueText === 'Enter the task...'
-//     ) {
-//       setErrorText('Task cannot be empty.');
-//       newErrors++;
-//     }
-//     if (topic === '' || topicIndex === -1) {
-//       setErrorTopic('Topic is not chosen.');
-//       newErrors++;
-//     }
-//     if (valueMark === undefined) {
-//       setErrorMark('Mark cannot be empty.');
-//     }
-//     if (valueMark !== undefined && valueMark > 0 && valueMark < 21) {
-//       setErrorMark('');
-//     }
-//     return newErrors === 0;
-//   }

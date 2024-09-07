@@ -13,7 +13,7 @@ import (
 )
 
 func PostSignUp(w http.ResponseWriter, r *http.Request) {
-    AllowOrigin(w)
+	AllowOrigin(w)
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -49,7 +49,7 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostSignIn(w http.ResponseWriter, r *http.Request) {
-    AllowOrigin(w)
+	AllowOrigin(w)
 	var user models.User
 
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -71,13 +71,13 @@ func PostSignIn(w http.ResponseWriter, r *http.Request) {
 		Expires:  time.Now().Add(30 * 24 * time.Hour),
 	}
 
-    userDto := models.UserDTO{
-        Id: fetchedUser.Id,
-        Email: fetchedUser.Email,
-        Username: fetchedUser.Username,
-        IsActivated: fetchedUser.IsActivated,
-        FavouriteTracks: fetchedUser.FavouriteTracks,
-    }
+	userDto := models.UserDTO{
+		Id:              fetchedUser.Id,
+		Email:           fetchedUser.Email,
+		Username:        fetchedUser.Username,
+		IsActivated:     fetchedUser.IsActivated,
+		FavouriteTracks: fetchedUser.FavouriteTracks,
+	}
 
 	w.Header().Add("Set-Cookie", fmt.Sprintf("%s;Partitioned", cookie.String()))
 	w.Header().Set("Content-Type", "application/json")
@@ -86,28 +86,27 @@ func PostSignIn(w http.ResponseWriter, r *http.Request) {
 	response["user"] = userDto
 	json.NewEncoder(w).Encode(response)
 
-
 	return
 }
 func PostSignOut(w http.ResponseWriter, r *http.Request) {
-    AllowOrigin(w)
+	AllowOrigin(w)
 	user := r.Context().Value("user").(*models.UserClaims)
-    err := services.Logout(user.Payload.Id)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	err := services.Logout(user.Payload.Id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	cookie := &http.Cookie{
-		Name:     "refreshToken",
-		Value:    "",
-		Path:     "/",
-        MaxAge: -1,
+		Name:   "refreshToken",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
 	}
 	w.Header().Add("Set-Cookie", fmt.Sprintf("%s;Partitioned", cookie.String()))
 	return
 }
 func GetActivation(w http.ResponseWriter, r *http.Request) {
-    AllowOrigin(w)
+	AllowOrigin(w)
 	activationLink := mux.Vars(r)["link"]
 	user, err := repositories.ActivateUser(activationLink)
 	fmt.Println(activationLink)
@@ -120,7 +119,7 @@ func GetActivation(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func GetRefreshedToken(w http.ResponseWriter, r *http.Request) {
-  AllowOrigin(w)
+	AllowOrigin(w)
 
 	refreshCookie, err := r.Cookie("refreshToken")
 	if err != nil {
@@ -150,7 +149,7 @@ func GetRefreshedToken(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-    AllowOrigin(w)
+	AllowOrigin(w)
 	users, err := repositories.GetAllUsers()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -161,7 +160,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	return
 }
 func GetUser(w http.ResponseWriter, r *http.Request) {
-    AllowOrigin(w)
+	AllowOrigin(w)
 	user_id := mux.Vars(r)["user_id"]
 	user, err := repositories.GetUser(user_id)
 	fmt.Println(user_id)
@@ -175,7 +174,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
-  AllowOrigin(w)
+	AllowOrigin(w)
 
 	user := r.Context().Value("user").(*models.UserClaims)
 	fmt.Fprintf(w, "Hello, %s!", user.Payload.Email)

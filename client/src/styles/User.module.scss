@@ -1,5 +1,9 @@
 @import './variables.scss';
 
+
+.link_container{
+    text-decoration: none;
+}
 .user_container {
     display: flex;
     flex-direction: row;
@@ -57,7 +61,6 @@
 
 .button_with_icon:hover{
     opacity: 0.8;
-
     img {
         transform: translateX(2rem);
     }

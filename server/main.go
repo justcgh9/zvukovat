@@ -45,12 +45,14 @@ func main() {
 
 	r := mux.NewRouter()
 
-    r.HandleFunc("/registration", routers.PostSignUp).Methods("POST")
+	r.HandleFunc("/registration", routers.HandleCORS).Methods("OPTIONS")
+	r.HandleFunc("/registration", routers.PostSignUp).Methods("POST")
 	r.HandleFunc("/users", routers.GetUsers).Methods("GET")
 	r.HandleFunc("/user/{user_id}", routers.GetUser).Methods("GET")
 	r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("GET")
 	r.HandleFunc("/activate/{link}", routers.GetActivation).Methods("GET")
-	r.Handle("/logout", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostSignOut))).Methods(http.MethodPost)
+	r.HandleFunc("/logout", routers.PostSignOut).Methods("POST")
+	r.HandleFunc("/login", routers.HandleCORS).Methods("OPTIONS")
 	r.HandleFunc("/login", routers.PostSignIn).Methods("POST")
 
 	r.Handle("/tracks", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostTrack))).Methods(http.MethodPost)
