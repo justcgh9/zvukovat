@@ -1,5 +1,7 @@
 import * as PlayerActionCreators from './player'
 
-export default {
+const variable = {
     ...PlayerActionCreators
-}
+};
+
+export default variable;

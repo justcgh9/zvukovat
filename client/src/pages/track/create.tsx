@@ -36,12 +36,12 @@ export default function CreateTrack(){
             console.log('empty audio', errors);
         }
 
-        if(audioFile.value && audioFile.value.name.split('.').slice(-1)[0].toLowerCase() !== ('mp3' || 'wav' || 'ogg')){
+        if(audioFile.value && (audioFile.value.name.split('.').slice(-1)[0].toLowerCase() !== 'mp3' || audioFile.value.name.split('.').slice(-1)[0].toLowerCase() !== 'wav' || audioFile.value.name.split('.').slice(-1)[0].toLowerCase() !== 'ogg')){
             newErrors[newErrors.length] = "Invalid cover image format";
             console.log('invalid audiofile format');
         }
 
-        if(cover.value && cover.value.name.split('.').slice(-1)[0].toLowerCase() !== ('jpg' || 'png' || 'jpeg')){
+        if(cover.value && (cover.value.name.split('.').slice(-1)[0].toLowerCase() !== 'jpg' || cover.value.name.split('.').slice(-1)[0].toLowerCase() !== 'png' || cover.value.name.split('.').slice(-1)[0].toLowerCase() !== 'jpeg')){
             newErrors[newErrors.length] = "Invalid audio file format";
             console.log('invalid image format');
         } 
@@ -86,7 +86,7 @@ export default function CreateTrack(){
                 </div>
                 { errors.length !== 0 && <div className={styles.errors}>
                     <h4 className={styles.errors_heading}>Please Correct the Following</h4>
-                    {errors.map((error) => <p className={styles.error}>{error}</p>)}
+                    {errors.map((error) => <p key={error} className={styles.error}>{error}</p>)}
                 </div>
                 }
                 <button type='submit' onClick={handleSubmit} className={styles.save_btn}>Save</button>
