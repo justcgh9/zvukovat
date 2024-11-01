@@ -16,8 +16,17 @@ import (
 const uploadDir = "files/"
 
 func AllowOrigin(w http.ResponseWriter) {
-    w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-    w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+}
+
+func HandleCORS(w http.ResponseWriter, r *http.Request) {
+
+	AllowOrigin(w)
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-type, Cookie, Authorization")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.WriteHeader(http.StatusOK)
 }
 
 func GetTrackHandler(w http.ResponseWriter, r *http.Request) {
@@ -207,11 +216,11 @@ func UnlikeTrack(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetArtists(w http.ResponseWriter, r *http.Request) {
-    artists, err := services.GetArtists()
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(artists)
+	artists, err := services.GetArtists()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(artists)
 }
