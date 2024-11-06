@@ -1,5 +1,5 @@
-import { PlayerAction, PlayerActionTypes } from "@/types/player"
-import { ITrack } from "@/types/track"
+import { PlayerAction, PlayerActionTypes, TracksOrder } from "@/types/player"
+import { TrackResp } from "@/types/track"
 
 export const playTrack = (): PlayerAction => {
     return {type: PlayerActionTypes.PLAY}
@@ -13,14 +13,14 @@ export const setDuration = (payload: number): PlayerAction => {
     return {type: PlayerActionTypes.SET_DURATION, payload}
 }
 
-export const setVolume = (payload: number): PlayerAction => {
-    return {type: PlayerActionTypes.SET_VOLUME, payload}
+export const setOrder = (payload: TracksOrder): PlayerAction => {
+    return {type: PlayerActionTypes.SET_ORDER, payload}
 }
 
 export const setCurrentTime = (payload: number): PlayerAction => {
     return {type: PlayerActionTypes.SET_CURRENT_TIME, payload}
 }
 
-export const setActiveTrack = (payload: ITrack): PlayerAction => {
+export const setActiveTrack = (payload: TrackResp): PlayerAction => {
     return {type: PlayerActionTypes.SET_ACTIVE, payload}
 }

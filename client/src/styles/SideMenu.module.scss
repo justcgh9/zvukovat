@@ -10,14 +10,17 @@
     box-sizing: border-box;
     justify-content: space-between;
     scrollbar-width: 0;
+    width: 18.5%;
     ::-webkit-scrollbar{
         display: none;
     }
+
+    .menu_container {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        gap: 3rem;
+
+    }
 }
 
-.menu_container {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    gap: 3rem;
-}

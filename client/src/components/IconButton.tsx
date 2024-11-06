@@ -21,6 +21,7 @@ export default function IconButton({
 }: IconButtonProps) {
   return (
     <button
+      type='button'
       id={id}
       onClick={onClick}
       className={`${styles.icon_button} ${className}`}

@@ -1,0 +1,72 @@
+@import "./variables.scss";
+
+
+.input_textarea_container {
+    position: relative;
+    height: 20rem;
+    width: 100%;
+  }
+
+.input_textarea {
+    box-sizing: border-box;
+    font-size: 1rem;
+    font-family: $font-roboto-serif;
+    font-weight: 400;
+    color: $color-light;
+    border: 1px solid $color-light-70;
+    background-color: transparent;
+    line-height: 1.5rem;
+    padding: 0.75rem 0 0.75rem 1rem;
+    width: 100%;
+    height: 20rem;
+    outline: none;
+    word-break: break-all;
+    text-align: left;
+    vertical-align: top;
+    resize: none;
+    transition: all 0.15s ease-in-out;
+}
+
+.input_textarea:hover{
+    border: 1px solid $color-light;
+}
+
+.label_textarea {
+    margin-left: 1rem;
+    margin-top: -19.25rem;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    font-size: 1rem;
+    font-family: $font-roboto-serif;
+    font-weight: 400;
+    color: $color-light-70;
+    z-index: 100;
+    padding: 0;
+    margin-bottom: 0;
+  }
+
+
+  .input_textarea:focus{
+    outline: none;
+    border: 1px solid $color-accent;
+}
+  
+  .label_textarea .text_textarea {
+    transition: all 0.15s ease-out;
+  }
+
+  
+  .input_textarea:focus + .label_textarea .text_textarea,  .input_textarea.has_value + .label_textarea .text_textarea{
+    font-size: 0.875rem;
+    transform: translate(0, -150%);
+    background-color: $color-background;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .input_textarea:focus + .label_textarea .text_textarea {
+    color: $color-accent;
+  }
+
+  
