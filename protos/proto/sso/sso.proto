@@ -1,0 +1,33 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+package auth;
+
+option go_package = "justcgh9.sso.v1;ssov1";
+
+service Auth {
+    rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+}
+
+message User {
+    string id = 1;
+    string username = 2;
+    string email = 3;
+    bool is_activated = 4;
+    repeated string favourite_tracks = 5;
+}
+
+message ValidateTokenRequest {
+    string token = 1;
+}
+
+message ValidateTokenResponse {
+    User payload = 8;
+    string sub = 1;
+    google.protobuf.Timestamp exp = 2;
+    google.protobuf.Timestamp iat = 3;
+    google.protobuf.Timestamp nbf = 4;
+    string iss = 5;
+    repeated string aud = 6;
+    string jti = 7;
+}

@@ -1,0 +1,17 @@
+env: "local"
+storage_path: "mongodb://root:example@localhost:27017" #todo
+db_name: "woe_from_wit"
+access_token_ttl: 1h
+refresh_token_ttl: 720h
+email:
+  port: 587
+  user: "zvukovat@gmail.com"
+  host: "smtp.gmail.com"
+  pswd: "geeq rrjm cjaq knag"
+grpc:
+  port: 44044
+  timeout: 10s
+http:
+  port: 8080
+  timeout: 10s
+  idle_timeout: 60s
