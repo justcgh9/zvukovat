@@ -40,6 +40,8 @@ func main() {
         cfg.Email.Port,
         cfg.AccessTokenTTL,
         cfg.RefreshTokenTTL,
+        cfg.JwtAccessSecret,
+        cfg.JwtRefreshSecret,
         cfg.GRPC.Timeout,
         cfg.HTTP.Timeout,
         cfg.HTTP.IdleTimeout,

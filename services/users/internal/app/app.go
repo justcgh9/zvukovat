@@ -26,6 +26,7 @@ func New(
     emailPort int,
     accessTokenTTL time.Duration,
     refreshTokenTTL time.Duration,
+    accessSecret, refreshSecret string,
     grpcTimeout time.Duration,
     httpTimeout time.Duration,
     httpIdleTimeout time.Duration,
@@ -57,7 +58,7 @@ func New(
         refreshTokenTTL,
     )
     grpcApp := grpcapp.New(log, grpcPort)
-    httpApp := httpapp.New(log, httpPort, httpTimeout, httpIdleTimeout, authSrvc)
+    httpApp := httpapp.New(log, httpPort, httpTimeout, httpIdleTimeout, authSrvc, accessSecret, refreshSecret)
 
     return &App{
         GRPCSrv: *grpcApp,

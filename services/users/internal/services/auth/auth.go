@@ -86,7 +86,7 @@ type EmailSender interface {
     SendEmail(email, link string) error
 }
 
-func (a *Auth) SignUp(ctx context.Context, usr models.User, domainName string) (map[string]string, models.UserDTO, error) {
+func (a *Auth) SignUp(ctx context.Context, usr models.User, domainName, accessSecret, refreshSecret string) (map[string]string, models.UserDTO, error) {
     const op = "services.auth.SignUp"
     var err error
 
@@ -124,7 +124,7 @@ func (a *Auth) SignUp(ctx context.Context, usr models.User, domainName string) (
     }
     log.Info("confirmation link sent", slog.String("link", usr.ActivationLink))
 
-    tokens, err := jwt.GenerateTokens(usrDTO, "", "")
+    tokens, err := jwt.GenerateTokens(usrDTO, accessSecret, refreshSecret)
     if err != nil {
         log.Error(err.Error())
         return nil, models.UserDTO{}, fmt.Errorf("%s: %w", op, err)
@@ -140,7 +140,7 @@ func (a *Auth) SignUp(ctx context.Context, usr models.User, domainName string) (
     return tokens, usrDTO, nil
 }
 
-func (a *Auth) SignIn(ctx context.Context, user models.User) (map[string]string, models.UserDTO, error) {
+func (a *Auth) SignIn(ctx context.Context, user models.User, accessSecret, refreshSecret string) (map[string]string, models.UserDTO, error) {
     const op = "services.auth.SignIn"
 
     log := a.log.With(
@@ -160,7 +160,7 @@ func (a *Auth) SignIn(ctx context.Context, user models.User) (map[string]string,
         return nil, models.UserDTO{}, fmt.Errorf("%s: %w", op, err)
     }
 
-    tkns, err := jwt.GenerateTokens(usr.UserDTO, "", "")
+    tkns, err := jwt.GenerateTokens(usr.UserDTO, accessSecret, refreshSecret)
     if err != nil {
         return nil, models.UserDTO{}, fmt.Errorf("%s: %w", op, err)
     }

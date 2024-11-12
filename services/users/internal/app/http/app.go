@@ -24,12 +24,13 @@ func New(
     timeout time.Duration,
     iddleTimeout time.Duration,
     authSrvc *auth.Auth,
+    accessSecret, refreshSecret string,
 ) *App {
     router := chi.NewRouter()
 
     router.Route("/users", func(router chi.Router) {
-        router.Post("/signup", handlers.NewSignUp(log, authSrvc, timeout, fmt.Sprintf("http://localhost:%d", port)))
-        router.Post("/signin", handlers.NewSignIn(log, authSrvc, timeout))
+        router.Post("/signup", handlers.NewSignUp(log, authSrvc, timeout, fmt.Sprintf("http://localhost:%d", port), accessSecret, refreshSecret))
+        router.Post("/signin", handlers.NewSignIn(log, authSrvc, timeout, accessSecret, refreshSecret))
     })
 
     return &App{

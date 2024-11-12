@@ -15,6 +15,8 @@ type Config struct {
     DBName string `yaml:"db_name" env-required:"true"`
     AccessTokenTTL  time.Duration `yaml:"access_token_ttl" env-required:"true"`
     RefreshTokenTTL time.Duration `yaml:"refresh_token_ttl" env-required:"true"`
+    JwtAccessSecret string `yaml:"jwt_access_secret" env-required:"true"`
+    JwtRefreshSecret string `yaml:"jwt_refresh_secret" env-required:"true"`
     GRPC GRPCConfig `yaml:"grpc"`
     HTTP HTTPConfig `yaml:"http"`
     Email EmailConfig `yaml:"email"`

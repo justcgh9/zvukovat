@@ -1,8 +1,10 @@
 env: "local"
-storage_path: "mongodb://root:example@localhost:27017" #todo
+storage_path: "mongodb://root:example@localhost:27017"
 db_name: "woe_from_wit"
 access_token_ttl: 1h
 refresh_token_ttl: 720h
+jwt_access_secret: jwt-secret-key
+jwt_refresh_secret: jwt-refresh-secret-key
 email:
   port: 587
   user: "zvukovat@gmail.com"
