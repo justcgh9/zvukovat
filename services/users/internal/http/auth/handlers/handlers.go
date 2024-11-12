@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+    "github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 	"github.com/justcgh9/zvukovat/services/users/internal/domain/models"
@@ -20,7 +21,7 @@ const (
 )
 
 type Registrator interface {
-    SignUp(ctx context.Context, usr models.User, domainName, accessSecret, refreshSecret string) (map[string]string, models.UserDTO, error)
+    SignUp(ctx context.Context, usr models.User, domainName string) (map[string]string, models.UserDTO, error)
 }
 
 func NewSignUp(
@@ -50,7 +51,7 @@ func NewSignUp(
         ctx, cancel := context.WithTimeout(context.Background(), timeout)
         defer cancel()
 
-        tkns, usr, err := registrator.SignUp(ctx, user, domainName, accessSecret, refreshSecret)
+        tkns, usr, err := registrator.SignUp(ctx, user, domainName)
         if err != nil {
             log.Error("error signing up", slog.String("error", err.Error()))
             render.Status(r, 400)
@@ -85,7 +86,7 @@ func NewSignUp(
 
 
 type Loginer interface {
-    SignIn(ctx context.Context, user models.User, accessSecret, refreshSecret string) (map[string]string, models.UserDTO, error)
+    SignIn(ctx context.Context, user models.User) (map[string]string, models.UserDTO, error)
 }
 
 func NewSignIn(
@@ -114,7 +115,7 @@ func NewSignIn(
         ctx, cancel := context.WithTimeout(context.Background(), timeout)
         defer cancel()
 
-        tkns, usr, err := loginer.SignIn(ctx, user, accessSecret, refreshSecret)
+        tkns, usr, err := loginer.SignIn(ctx, user)
         if err != nil {
             log.Error("error decoding request body", slog.String("error", err.Error()))
             render.Status(r, 400)
@@ -213,7 +214,8 @@ func NewActivateUser(
             slog.String("request_id", middleware.GetReqID(r.Context())),
         )
 
-        link := r.URL.Query().Get("link")
+        link := chi.URLParam(r, "link")
+        log.Info("", slog.String("link", link))
         ctx, cancel := context.WithTimeout(context.Background(), timeout)
         defer cancel()
 

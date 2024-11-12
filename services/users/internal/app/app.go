@@ -56,6 +56,8 @@ func New(
         emailSrvc,
         accessTokenTTL,
         refreshTokenTTL,
+        accessSecret,
+        refreshSecret,
     )
     grpcApp := grpcapp.New(log, grpcPort)
     httpApp := httpapp.New(log, httpPort, httpTimeout, httpIdleTimeout, authSrvc, accessSecret, refreshSecret)

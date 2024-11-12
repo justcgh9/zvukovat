@@ -31,6 +31,9 @@ func New(
     router.Route("/users", func(router chi.Router) {
         router.Post("/signup", handlers.NewSignUp(log, authSrvc, timeout, fmt.Sprintf("http://localhost:%d", port), accessSecret, refreshSecret))
         router.Post("/signin", handlers.NewSignIn(log, authSrvc, timeout, accessSecret, refreshSecret))
+        router.Post("/signout", handlers.NewSignOut(log, authSrvc, timeout))
+        router.Patch("/activate/{link}", handlers.NewActivateUser(log, authSrvc, timeout))
+        router.Get("/refresh", handlers.NewRefreshAccessToken(log, authSrvc, timeout))
     })
 
     return &App{

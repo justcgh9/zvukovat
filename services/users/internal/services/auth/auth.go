@@ -23,6 +23,8 @@ type Auth struct {
     emlSender EmailSender
     accessTokenTTL time.Duration
     refreshTokenTTL time.Duration
+    accessSecret string
+    refreshSecret string
 }
 
 func New(
@@ -36,6 +38,8 @@ func New(
     emlSender EmailSender,
     accessTokenTTL time.Duration,
     refreshTokenTTL time.Duration,
+    accessSecret string,
+    refreshSecret string,
 ) *Auth {
     return &Auth{
         log:             logger,
@@ -48,6 +52,8 @@ func New(
         emlSender:       emlSender,
         accessTokenTTL:  accessTokenTTL,
         refreshTokenTTL: refreshTokenTTL,
+        accessSecret: accessSecret ,
+        refreshSecret: refreshSecret,
     }
 }
 
@@ -86,7 +92,7 @@ type EmailSender interface {
     SendEmail(email, link string) error
 }
 
-func (a *Auth) SignUp(ctx context.Context, usr models.User, domainName, accessSecret, refreshSecret string) (map[string]string, models.UserDTO, error) {
+func (a *Auth) SignUp(ctx context.Context, usr models.User, domainName string) (map[string]string, models.UserDTO, error) {
     const op = "services.auth.SignUp"
     var err error
 
@@ -124,7 +130,7 @@ func (a *Auth) SignUp(ctx context.Context, usr models.User, domainName, accessSe
     }
     log.Info("confirmation link sent", slog.String("link", usr.ActivationLink))
 
-    tokens, err := jwt.GenerateTokens(usrDTO, accessSecret, refreshSecret)
+    tokens, err := jwt.GenerateTokens(usrDTO, a.accessSecret, a.refreshSecret)
     if err != nil {
         log.Error(err.Error())
         return nil, models.UserDTO{}, fmt.Errorf("%s: %w", op, err)
@@ -140,7 +146,7 @@ func (a *Auth) SignUp(ctx context.Context, usr models.User, domainName, accessSe
     return tokens, usrDTO, nil
 }
 
-func (a *Auth) SignIn(ctx context.Context, user models.User, accessSecret, refreshSecret string) (map[string]string, models.UserDTO, error) {
+func (a *Auth) SignIn(ctx context.Context, user models.User) (map[string]string, models.UserDTO, error) {
     const op = "services.auth.SignIn"
 
     log := a.log.With(
@@ -157,11 +163,13 @@ func (a *Auth) SignIn(ctx context.Context, user models.User, accessSecret, refre
     }
 
     if !checkPasswordHash(user.Password, usr.Password) || !usr.IsActivated {
+        log.Error(err.Error())
         return nil, models.UserDTO{}, fmt.Errorf("%s: %w", op, err)
     }
 
-    tkns, err := jwt.GenerateTokens(usr.UserDTO, accessSecret, refreshSecret)
+    tkns, err := jwt.GenerateTokens(usr.UserDTO, a.accessSecret, a.refreshSecret)
     if err != nil {
+        log.Error(err.Error())
         return nil, models.UserDTO{}, fmt.Errorf("%s: %w", op, err)
     }
 
@@ -169,11 +177,97 @@ func (a *Auth) SignIn(ctx context.Context, user models.User, accessSecret, refre
 
     _, err = a.tknSaver.SaveToken(ctx, tkn)
     if err != nil {
+        log.Error(err.Error())
         return nil, models.UserDTO{}, fmt.Errorf("%s: %w", op, err)
     }
 
     return tkns, usr.UserDTO, nil
 
+}
+
+func (a *Auth) SignOut(ctx context.Context, token string) error {
+    const op = "services.auth.SignOut"
+
+    log := a.log.With(
+        slog.String("op", op),
+        )
+
+    claims, err := jwt.ValidateAccessToken(token, a.accessSecret)
+    if err != nil {
+        log.Error(err.Error())
+        return fmt.Errorf("%s: %w", op, err)
+    }
+
+    err = a.tknRemover.DeleteToken(ctx, claims.Payload.Id)
+    if err != nil {
+        log.Error(err.Error())
+        return fmt.Errorf("%s: %w", op, err)
+    }
+
+    return nil
+}
+
+func (a *Auth) ActivateUser(ctx context.Context, link string) (models.UserDTO, error) {
+    const op = "services.auth.ActivateUser"
+
+    log := a.log.With(
+        slog.String("op", op),
+        )
+
+    usr, err := a.usrUpdater.ActivateUser(ctx, link)
+    if err != nil {
+        log.Error(err.Error())
+        return models.UserDTO{}, fmt.Errorf("%s: %w", op, err)
+    }
+
+    return usr, nil
+}
+
+func (a *Auth) Refresh(ctx context.Context, token string) (map[string]string, error) {
+    const op = "services.auth.Refresh"
+
+    log := a.log.With(
+        slog.String("op", op),
+        )
+
+    log.Info("attempting to log out a user")
+    claims, err := jwt.ValidateRefreshToken(token, a.refreshSecret)
+    if err != nil {
+        log.Error(err.Error())
+        return nil, fmt.Errorf("%s: %w", op, err)
+    }
+
+    if !claims.Payload.UserDTO.IsActivated {
+        log.Error("user is not activated")
+        return nil, fmt.Errorf("%s: %s", op, "user is not activated")
+    }
+
+    _, err = a.tknProvider.Token(ctx, token)
+    if err != nil {
+        log.Error(err.Error())
+        return nil, fmt.Errorf("%s: %w", op, err)
+    }
+
+    usr, err := a.usrProvider.User(ctx, claims.Payload.Email)
+    if err != nil {
+        log.Error(err.Error())
+        return nil, fmt.Errorf("%s: %w", op, err)
+    }
+
+    tkns, err := jwt.GenerateTokens(usr.UserDTO, a.accessSecret, a.refreshSecret)
+    if err != nil {
+        log.Error(err.Error())
+        return nil, fmt.Errorf("%s: %w", op, err)
+    }
+
+    tkn := models.NewToken(usr.Id, tkns["refreshToken"])
+    _, err = a.tknSaver.SaveToken(ctx, tkn)
+    if err != nil {
+        log.Error(err.Error())
+        return nil, fmt.Errorf("%s: %w", op, err)
+    }
+
+    return tkns, nil
 }
 
 func hashPassword(password string) (string, error) {
