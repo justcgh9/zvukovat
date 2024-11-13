@@ -4,13 +4,12 @@ import UserIcon from '../assets/user.svg';
 import SignUpIcon from '../assets/uil_sign-in-alt.svg';
 import Link from 'next/link';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
+import Cookies from 'js-cookie';
 
 export default function User(){
     const user = useTypedSelector(state => state.user);
-    console.log(user);
     let username;
     (Object.keys(user).length === 0) ? username = "": username = user.username;
-    console.log(username)
     return (<div className={styles.user_container}>
         {username && <>
             <Image src={UserIcon} alt='user'/>

@@ -3,7 +3,8 @@ import { AuthResp, User, UserAction, UserActionTypes } from "../../types/user";
 import axios, { AxiosError } from "axios";
 import { Dispatch } from "redux";
 import { API_URL } from "@/http";
-
+import Cookies from 'js-cookie';
+import { jwtDecode } from "jwt-decode";
 
 
 export const loginUser = async (email: string, password:string) => {
@@ -11,9 +12,8 @@ export const loginUser = async (email: string, password:string) => {
         try {
             const response = await AuthService.login(email, password);
             if(response.status === 200){
-                localStorage.setItem('token', response.data.accessToken);
+                localStorage.setItem('token', response.data.tokens.accessToken);
                 dispatch(setUser(response.data.user));
-                console.log("user-> ", response.data.user);
                 return null;
             } 
         } catch (e: unknown) {
@@ -29,8 +29,8 @@ export const registerUser = async (username: string, email: string, password:str
         try {
             const response = await AuthService.registration(username, email, password);
             if (response.status === 200){
-                localStorage.setItem('token', response.data.accessToken);
-                setUser(response.data.user);
+                localStorage.setItem('token', response.data.tokens.accessToken);
+                dispatch(setUser(response.data.user));
             }
         }  catch (e: unknown) {
             if (e instanceof AxiosError){
@@ -53,17 +53,27 @@ export const logoutUser = async () => {
         }
     }
 }
+interface JWTResp{
+    exp: number;
+    payload: User;
+}
 
 export const checkAuth = async () => {
     return async (dispatch: Dispatch<UserAction>) => {
         try {
-            const response = await axios.post<AuthResp>(`${API_URL}refresh`, {withCredentials: true});
-            localStorage.setItem('token', response.data.accessToken);
-            setUser(response.data.user);
-            console.log(response.data.user);
+            const refreshToken = Cookies.get('refreshToken'); 
+            axios.defaults.withCredentials = true;
+            console.log(refreshToken);
+            const response = await axios.post(`${API_URL}refresh`, {withCredentials: true});
+            if (response.status === 200){
+                localStorage.setItem('token', response.data.accessToken);
+                const decoded = jwtDecode(response.data.accessToken);
+                console.log(decoded)
+                dispatch(setUser((decoded as JWTResp).payload as User));
+            }
         } catch (e: unknown) {
             if (e instanceof AxiosError){
-                console.log(e.response?.data?.message);
+                console.log(e.response?.data);
             }
         }
     }

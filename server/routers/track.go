@@ -18,14 +18,16 @@ const uploadDir = "files/"
 func AllowOrigin(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Expose-Headers", "Set-Cookie, Cookie")
 }
 
 func HandleCORS(w http.ResponseWriter, r *http.Request) {
 
 	AllowOrigin(w)
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-type, Cookie, Authorization")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-type, Cookie, Set-Cookie, Authorization")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Expose-Headers", "Set-Cookie, Cookie")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -53,7 +55,7 @@ func GetTrackHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTracksHandler(w http.ResponseWriter, r *http.Request) {
-
+	AllowOrigin(w)
 	queryParams := r.URL.Query()
 	countStr := queryParams.Get("count")
 	offsetStr := queryParams.Get("offset")

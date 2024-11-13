@@ -6,7 +6,6 @@ import FileUploader from '@/components/FileUploader';
 import ImageIcon from '../../assets/image_icon.svg';
 import AudioFileIcon from '../../assets/audio_file_icon.svg';
 import { MouseEvent, useState } from 'react';
-import axios from 'axios';
 import router from 'next/router';
 import api from '@/http';
 
@@ -65,7 +64,6 @@ export default function CreateTrack(){
         }
         
     }
-
 
     return (<section id={styles.create_page_container}>
         <h2 className={styles.main_title}>Upload track</h2>

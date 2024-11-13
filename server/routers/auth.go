@@ -35,6 +35,7 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
 		Secure:   true,
 		Path:     "/",
 		Expires:  time.Now().Add(30 * 24 * time.Hour),
+		SameSite: http.SameSiteNoneMode,
 	}
 
 	w.Header().Add("Set-Cookie", fmt.Sprintf("%s;Partitioned", cookie.String()))
@@ -69,6 +70,7 @@ func PostSignIn(w http.ResponseWriter, r *http.Request) {
 		Secure:   true,
 		Path:     "/",
 		Expires:  time.Now().Add(30 * 24 * time.Hour),
+		SameSite: http.SameSiteNoneMode,
 	}
 
 	userDto := models.UserDTO{
@@ -123,6 +125,8 @@ func GetRefreshedToken(w http.ResponseWriter, r *http.Request) {
 
 	refreshCookie, err := r.Cookie("refreshToken")
 	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println(r.Header)
 		http.Error(w, "Ivalid refreshToken cookie", http.StatusForbidden)
 		return
 	}
@@ -139,6 +143,7 @@ func GetRefreshedToken(w http.ResponseWriter, r *http.Request) {
 		Secure:   true,
 		Path:     "/",
 		Expires:  time.Now().Add(30 * 24 * time.Hour),
+        SameSite: http.SameSiteNoneMode,
 	}
 
 	w.Header().Add("Set-Cookie", fmt.Sprintf("%s;Partitioned", cookie.String()))
