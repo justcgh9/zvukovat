@@ -6,7 +6,7 @@ import {currentReducer} from "./currentReducer";
 import { current } from "@reduxjs/toolkit";
 import { userReducer } from "./userReducer";
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
     player: playerReducer,
     track: trackReducer,
     current: currentReducer,
