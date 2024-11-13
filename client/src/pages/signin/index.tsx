@@ -10,12 +10,15 @@ import { loginUser } from "@/store/action-creators/user";
 import { useTypedSelector } from "@/hooks/useTypedSelector";
 import { UnknownAction } from "redux";
 import router from "next/router";
+import { useActions } from "@/hooks/useActions";
 
 export default function SignIn(){
     const email = useInput("");
     const password = useInput("");
     const [errors, setErrors] = useState<string[]>([]);
     const dispatch = useDispatch() as NextThunkDispatch;
+
+    // const {setUser} = useActions();
 
     
     function checkInput(){
@@ -42,8 +45,12 @@ export default function SignIn(){
 
     async function handleSubmit(){
         if(checkInput()){
-            dispatch(await loginUser(email.value, password.value));
-            // router.push("/track");
+            const error = await dispatch(await loginUser(email.value, password.value));
+            if (error) {
+                setErrors(error);
+            } else {
+                router.push("/track");
+            }
         }
     }
 

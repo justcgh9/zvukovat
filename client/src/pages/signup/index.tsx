@@ -20,8 +20,7 @@ export default function SignUp(){
     async function handleSubmit(){
         if(checkInput()){
             console.log(`${firstName.value} ${lastName.value}`, email.value, password.value)
-            await dispatch(await registerUser(`${firstName.value} ${lastName.value}`, email.value, password.value));
-            // router.push('/track');
+            dispatch(await registerUser(`${firstName.value} ${lastName.value}`, email.value, password.value)).then((a) => {a ? setErrors(a): router.push("/track")});
         }
     }
 

@@ -1,13 +1,13 @@
 import styles from '../styles/User.module.scss';
 import Image from 'next/image';
 import UserIcon from '../assets/user.svg';
-import { UserProps } from '../types/user';
 import SignUpIcon from '../assets/uil_sign-in-alt.svg';
 import Link from 'next/link';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
 
-export default function User({name}: UserProps){
+export default function User(){
     const user = useTypedSelector(state => state.user);
+    console.log(user);
     let username;
     (Object.keys(user).length === 0) ? username = "": username = user.username;
     console.log(username)

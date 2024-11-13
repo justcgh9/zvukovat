@@ -6,4 +6,4 @@ import { ThunkDispatch, thunk } from "redux-thunk";
 const makeStore: MakeStore<Store<RootState>> = (context: Context) => createStore(reducer, applyMiddleware(thunk));
 export const wrapper = createWrapper<Store<RootState>>(makeStore, {debug: true});
 
-export type NextThunkDispatch = ThunkDispatch<RootState, void, Action> 
+export type NextThunkDispatch = ThunkDispatch<RootState, void, Action>;

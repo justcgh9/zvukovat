@@ -1,30 +1,40 @@
 import type { AppProps } from "next/app";
 import SideMenu from "@/components/SideMenu";
-import Container from "@mui/material/Container";
 import Player from "@/components/Player";
-import { wrapper } from "@/store";
+import { NextThunkDispatch, wrapper } from "@/store";
 import { FC, useEffect } from "react";
 import './global.scss';
 import { checkAuth } from "@/store/action-creators/user";
+import { useDispatch } from "react-redux";
 
 const App: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
 
+  const dispatch = useDispatch() as NextThunkDispatch;
   useEffect(() => {
-    if(localStorage.getItem('token')){
-      checkAuth();
-    }
+    (async function(){if(localStorage.getItem('token')){
+      dispatch(await checkAuth());
+    }})()
   }, [])
   
   return (
     <>
-      <Container style={{minHeight: '100%', minWidth: '100%', margin: 0, display: 'flex', flexDirection: 'row', padding: 0}} >
+      <main id="main">
+        <SideMenu />
+        <section id="content">
+          <Component {...pageProps} />
+          <Player/>
+        </section>
+        
+      </main>
+      {/* <Container style={{minHeight: '100vh', height: "fit-content", minWidth: '100%', margin: 0, display: 'flex', flexDirection: 'row', padding: 0, overflow:"visible"}} >
         <SideMenu />
         <Container style={{minWidth: '70%', margin: '0 auto', padding: 0}}>
           <Component {...pageProps} />
+          <Player/>
         </Container>
-        <Player/>
+        
       
-      </Container>
+      </Container> */}
       
       </>
   )

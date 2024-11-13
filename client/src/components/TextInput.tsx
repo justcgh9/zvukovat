@@ -7,15 +7,15 @@ export default function TextInput({label, onChange, value, isStretch=false, back
     <div className={`${styles.input_container} ${(isStretch ? styles.full_width : '')}`}>
         <input
           type={type}
-          id="textinput"
+          id={`textinput-${label}`}
           className={styles.input}
-          name="textinput"
+          name={`textinput-${label}`}
           value={value}
           onChange={onChange}
           aria-labelledby="label-textinput"
           autoComplete='off'
         />
-        <label className={styles.label} htmlFor="textinput" id="label-textinput">
+        <label className={styles.label} htmlFor={`textinput-${label}`} id="label-textinput">
           <div className={`${styles.text} ${(background ? styles.dark : '')}`}>{label}</div>
         </label>
       </div>

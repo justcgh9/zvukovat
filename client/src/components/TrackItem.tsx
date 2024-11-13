@@ -18,7 +18,6 @@ import DefaultCover from '../assets/default_cover.svg';
 
 export default function TrackItem({track, isFavourite = false}: TrackProps){
 
-    const [audio, setAudio] = useState<HTMLAudioElement>();
     const [duration, setDuration] = useState<number>(0);
 
 

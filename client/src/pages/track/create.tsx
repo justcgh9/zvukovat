@@ -36,30 +36,30 @@ export default function CreateTrack(){
             console.log('empty audio', errors);
         }
 
-        if(audioFile.value && (audioFile.value.name.split('.').slice(-1)[0].toLowerCase() !== 'mp3' || audioFile.value.name.split('.').slice(-1)[0].toLowerCase() !== 'wav' || audioFile.value.name.split('.').slice(-1)[0].toLowerCase() !== 'ogg')){
-            newErrors[newErrors.length] = "Invalid cover image format";
-            console.log('invalid audiofile format');
+        if(audioFile.value && !(audioFile.value.name.split('.').slice(-1)[0].toLowerCase() === 'mp3' || audioFile.value.name.split('.').slice(-1)[0].toLowerCase() === 'wav' || audioFile.value.name.split('.').slice(-1)[0].toLowerCase() === 'ogg')){
+            newErrors[newErrors.length] = "Invalid audio file format";
+            console.log('invalid audiofile format ->',  audioFile.value.name.split('.').slice(-1)[0].toLowerCase());
         }
 
-        if(cover.value && (cover.value.name.split('.').slice(-1)[0].toLowerCase() !== 'jpg' || cover.value.name.split('.').slice(-1)[0].toLowerCase() !== 'png' || cover.value.name.split('.').slice(-1)[0].toLowerCase() !== 'jpeg')){
-            newErrors[newErrors.length] = "Invalid audio file format";
-            console.log('invalid image format');
+        if(cover.value && !(cover.value.name.split('.').slice(-1)[0].toLowerCase() === 'jpg' || cover.value.name.split('.').slice(-1)[0].toLowerCase() === 'png' || cover.value.name.split('.').slice(-1)[0].toLowerCase() === 'jpeg')){
+            newErrors[newErrors.length] = "Invalid cover image format";
+            console.log('invalid image format ->', cover.value.name);
         } 
 
         setErrors([...newErrors]);
+        return newErrors.length === 0;
     }
 
     async function handleSubmit(event: MouseEvent<HTMLButtonElement, Event>) {
         event.preventDefault();
-        checkInput();
-        if (errors.length === 0){
+        if (checkInput()){
             const formData = new FormData();
             formData.append('name', title.value);
             formData.append('artist', performer.value);
             formData.append('text', lyrics.value);
             formData.append('picture', cover.value!);
             formData.append('audio', audioFile.value!);
-            api.post('/tracks/upload', formData)
+            api.post('/tracks', formData)
                 .then(resp => router.push('/track'))
                 .catch(e => console.log(e));
         }
@@ -71,26 +71,27 @@ export default function CreateTrack(){
         <h2 className={styles.main_title}>Upload track</h2>
         <form className={styles.create_form}>
             <label className={styles.create_form_label}>Provide track details</label>
-            <div className={styles.form_text_inputs}>
-                <div className={styles.form_container_text}>
-                    <TextInput label='Title' value={title.value} onChange={title.onChange}/>
-                    <TextInput label='Performer' value={performer.value} onChange={performer.onChange}/>
-                </div>
-                <TextAreaInput label='Lyrics' value={lyrics.value} onChange={lyrics.onChange}/>
             
-            </div>
             <div className={styles.form_container}>
+                <div className={styles.form_text_inputs}>
+                    <div className={styles.form_container_text}>
+                        <TextInput label='Title' value={title.value} onChange={title.onChange}/>
+                        <TextInput label='Performer' value={performer.value} onChange={performer.onChange}/>
+                    </div>
+                    <TextAreaInput label='Lyrics' value={lyrics.value} onChange={lyrics.onChange}/>
+                
+                </div>
                 <div className={styles.form_file_inputs}>
                     <FileUploader label='Choose track cover' icon={ImageIcon} formats='JPG, PNG, JPEG' onChange={cover.onChange} accept='image/*'/>
                     <FileUploader label='Choose audio file' icon={AudioFileIcon} formats='MP3, WAV, OGG' onChange={audioFile.onChange} accept='audio/*'/>
                 </div>
-                { errors.length !== 0 && <div className={styles.errors}>
-                    <h4 className={styles.errors_heading}>Please Correct the Following</h4>
-                    {errors.map((error) => <p key={error} className={styles.error}>{error}</p>)}
-                </div>
-                }
-                <button type='submit' onClick={handleSubmit} className={styles.save_btn}>Save</button>
             </div>
+            { errors.length !== 0 && <div className={styles.errors}>
+                <h4 className={styles.errors_heading}>Please Correct the Following</h4>
+                {errors.map((error) => <p key={error} className={styles.error}>{error}</p>)}
+            </div>
+            }
+            <button type='submit' onClick={handleSubmit} className={styles.save_btn}>Save</button>
         </form>
     </section>);
 }
