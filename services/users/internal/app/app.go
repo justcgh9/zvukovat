@@ -59,7 +59,7 @@ func New(
         accessSecret,
         refreshSecret,
     )
-    grpcApp := grpcapp.New(log, grpcPort)
+    grpcApp := grpcapp.New(log, grpcPort, accessSecret)
     httpApp := httpapp.New(log, httpPort, httpTimeout, httpIdleTimeout, authSrvc, accessSecret, refreshSecret)
 
     return &App{
