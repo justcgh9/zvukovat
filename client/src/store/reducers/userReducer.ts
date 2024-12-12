@@ -20,7 +20,7 @@ export const userReducer = (state = initialState, action: UserAction) : User => 
             }
             return state;
         case UserActionTypes.RESET_USER:
-            return {...state, ...initialState};
+            return {} as User;
         default:
             return state;
     }

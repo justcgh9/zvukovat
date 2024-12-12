@@ -52,7 +52,8 @@ func main() {
 	r.HandleFunc("/refresh", routers.GetRefreshedToken).Methods("POST")
 	r.HandleFunc("/refresh", routers.HandleCORS).Methods("OPTIONS")
 	r.HandleFunc("/activate/{link}", routers.GetActivation).Methods("GET")
-	r.HandleFunc("/logout", routers.PostSignOut).Methods("POST")
+	r.HandleFunc("/logout", routers.HandleCORS).Methods("OPTIONS")
+	r.Handle("/logout", middlewares.JwtAuthenticationMiddleware(http.HandlerFunc(routers.PostSignOut))).Methods(http.MethodPost)
 	r.HandleFunc("/login", routers.HandleCORS).Methods("OPTIONS")
 	r.HandleFunc("/login", routers.PostSignIn).Methods("POST")
 

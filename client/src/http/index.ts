@@ -17,7 +17,7 @@ api.interceptors.request.use(function (config: InternalAxiosRequestConfig){
 
 api.interceptors.response.use((config: AxiosResponse) => {
     return config;
-},async (error) => {
+}, async (error) => {
     const originalRequest = error.config;
     if (error.response.status == 401 && error.config && !error.config._retry) {
         originalRequest._retry = true;

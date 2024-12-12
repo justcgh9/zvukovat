@@ -45,7 +45,7 @@ export const logoutUser = async () => {
         try {
             const response = await AuthService.logout();
             localStorage.removeItem('token');
-            resetUser();
+            dispatch(resetUser());
         }  catch (e: unknown) {
             if (e instanceof AxiosError){
                 console.log(e.response?.data?.message);
@@ -63,7 +63,6 @@ export const checkAuth = async () => {
         try {
             const refreshToken = Cookies.get('refreshToken'); 
             axios.defaults.withCredentials = true;
-            console.log(refreshToken);
             const response = await axios.post(`${API_URL}refresh`, {withCredentials: true});
             if (response.status === 200){
                 localStorage.setItem('token', response.data.accessToken);
@@ -82,7 +81,6 @@ export const checkAuth = async () => {
 
 
 const setUser = (payload: User) : UserAction => {
-    console.log("userr", payload);
     return {type: UserActionTypes.SET_USER, payload};
 }
 

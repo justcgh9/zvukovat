@@ -111,7 +111,6 @@ func GetActivation(w http.ResponseWriter, r *http.Request) {
 	AllowOrigin(w)
 	activationLink := mux.Vars(r)["link"]
 	user, err := repositories.ActivateUser(activationLink)
-	fmt.Println(activationLink)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

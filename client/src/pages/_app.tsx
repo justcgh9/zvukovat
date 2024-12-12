@@ -12,9 +12,11 @@ const App: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
 
   const dispatch = useDispatch() as NextThunkDispatch;
   useEffect(() => {
-    (async function(){if(localStorage.getItem('token')){
+    (async function(){
+      if(localStorage.getItem('token')){
       dispatch(await checkAuth());
-    }})()
+    }
+  })()
   }, [])
   
   return (

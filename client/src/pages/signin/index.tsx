@@ -18,7 +18,6 @@ export default function SignIn(){
     const [errors, setErrors] = useState<string[]>([]);
     const dispatch = useDispatch() as NextThunkDispatch;
 
-    // const {setUser} = useActions();
 
     
     function checkInput(){
