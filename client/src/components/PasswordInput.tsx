@@ -11,16 +11,16 @@ export default function PasswordInput({label, onChange, value, isStretch=false, 
         <div className={`${styles.input_container} ${(isStretch ? styles.full_width : '')}`}>
             <input
             type={isHidden? "password" : "text"}
-            id="textinput"
+            id={`textinput-${label}`}
             className={styles.input}
-            name="textinput"
+            name={`textinput-${label}`}
             value={value}
             onChange={onChange}
             aria-labelledby="label-textinput"
             autoComplete='off'
             data-1p-ignore data-lpignore="true"
             />
-            <label className={styles.label} htmlFor="textinput" id="label-textinput">
+            <label className={styles.label} htmlFor={`textinput-${label}`} id="label-textinput">
             <div className={`${styles.text} ${(background ? styles.dark : '')}`}>{label}</div>
             </label>
         </div>

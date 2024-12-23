@@ -9,6 +9,8 @@
   }
   
 .icon_button img {
-    width: 2rem;
-    height: 2rem;
+    max-width: 2rem;
+    max-height: 2rem;
+    height: auto;
+    width: auto;
 }

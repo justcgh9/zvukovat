@@ -1,10 +1,9 @@
 import TrackItem from '@/components/TrackItem';
 import styles from '../../styles/TrackPage.module.scss';
 import Search from '@/components/Search';
-import axios, { AxiosResponse } from 'axios';
-import { TrackResp, TracksResp } from '@/types/track';
+import { TrackResp } from '@/types/track';
 import { useTypedSelector } from '@/hooks/useTypedSelector';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NextThunkDispatch, wrapper } from '@/store';
 import { useDispatch } from 'react-redux';
 import { fetchTracks, searchTracks } from '@/store/action-creators/track';
@@ -12,11 +11,16 @@ import { fetchTracks, searchTracks } from '@/store/action-creators/track';
 
 
 export default function Tracks() {
-
     const {tracks, error} = useTypedSelector(state => state.track);
     const [query, setQuery] = useState<string>('');
     const [timer, setTimer] = useState<any>(null);
     const dispatch = useDispatch() as NextThunkDispatch;
+
+    useEffect(() =>{
+        (async function () {
+        await dispatch(await fetchTracks());
+        })()
+    }, [])
 
     async function search(e: React.ChangeEvent<HTMLInputElement>) {
         setQuery(e.target.value);
@@ -50,8 +54,8 @@ export default function Tracks() {
     </section>;
 }
 
-export const getServerSideProps = wrapper.getServerSideProps(store => async (context) =>{
-    const dispatch = store.dispatch as NextThunkDispatch;
-    await dispatch(await fetchTracks());
-    return {props: {id: null}}; 
-  });
+// export const getServerSideProps = wrapper.getServerSideProps(store => async (context) =>{
+//     const dispatch = store.dispatch as NextThunkDispatch;
+//     await dispatch(await fetchTracks());
+//     return {props: {id: null}}; 
+//   });

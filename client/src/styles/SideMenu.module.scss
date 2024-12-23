@@ -2,18 +2,18 @@
 
 .side_menu {
     margin: 0;
-    height: 100vh;
     background-color: $color-dark-80;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
     box-sizing: border-box;
     justify-content: space-between;
     scrollbar-width: 0;
-    width: 18.5%;
+    padding: 0 1rem 1rem;
     ::-webkit-scrollbar{
         display: none;
     }
+    display: flex;
+    flex-direction: column;
 
     .menu_container {
         display: flex;
